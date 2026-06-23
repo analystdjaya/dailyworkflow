@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3-PC Workflow Infographic Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --ink: #17221f;
+      --muted: #5c6f67;
+      --line: #cfe4d7;
+      --green-950: #053f2d;
+      --green-900: #075338;
+      --green-800: #0b6b45;
+      --green-700: #10804f;
+      --teal-700: #0f766e;
+      --blue-800: #155e75;
+      --orange-600: #e66a22;
+      --paper: #ffffff;
+      --soft: #f3faf5;
+      --soft-2: #eef8f2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(243, 250, 245, 0.9), rgba(255, 255, 255, 0.96)),
+        #f7fbf8;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #cfded6;
+      background: #fff;
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    textarea { min-height: 76px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--green-700);
+      box-shadow: 0 0 0 3px rgba(16, 128, 79, .14);
+    }
+
+    label {
+      display: block;
+      color: #264238;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(340px, 440px) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, .94);
+      border: 1px solid #d6e6dc;
+      border-radius: 18px;
+      box-shadow: 0 18px 45px rgba(7, 83, 56, .08);
+    }
+
+    .toolbar-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      border-radius: 11px;
+      border: 1px solid transparent;
+      padding: 9px 13px;
+      font-weight: 800;
+      font-size: 13px;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      white-space: nowrap;
+    }
+
+    .toolbar-btn:hover { transform: translateY(-1px); }
+
+    .btn-primary { background: var(--green-800); color: #fff; box-shadow: 0 10px 22px rgba(7, 83, 56, .18); }
+    .btn-secondary { background: #edf7f1; color: var(--green-900); border-color: #cfe4d7; }
+    .btn-danger { background: #fff4ed; color: #b94711; border-color: #f5d1bd; }
+    .btn-dark { background: #17221f; color: #fff; }
+
+    .tab {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #cfe4d7;
+      background: #f6fbf7;
+      color: #315346;
+      border-radius: 12px;
+      padding: 10px 8px;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .tab.active {
+      background: var(--green-800);
+      color: #fff;
+      border-color: var(--green-800);
+      box-shadow: 0 10px 22px rgba(7, 83, 56, .16);
+    }
+
+    .step-editor {
+      border: 1px solid #d6e6dc;
+      border-radius: 15px;
+      background: #fbfefc;
+      padding: 14px;
+    }
+
+    .preview-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      background: #eef8f2;
+      border: 1px solid #d6e6dc;
+      padding: 14px;
+      max-height: calc(100vh - 122px);
+    }
+
+    .infographic {
+      width: 1480px;
+      min-height: 835px;
+      background: var(--paper);
+      border: 1px solid #c7dfcf;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 18px 55px rgba(7, 83, 56, .10);
+    }
+
+    .info-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(330px, .55fr);
+      gap: 28px;
+      padding: 32px 38px 24px;
+      background:
+        linear-gradient(90deg, rgba(7, 83, 56, .96), rgba(12, 111, 77, .92)),
+        var(--green-900);
+      color: #fff;
+    }
+
+    .brand-icon {
+      width: 82px;
+      height: 82px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, .14);
+      border: 1px solid rgba(255, 255, 255, .24);
+    }
+
+    .headline {
+      font-size: 52px;
+      line-height: .96;
+      font-weight: 950;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .subline {
+      margin-top: 12px;
+      color: rgba(255, 255, 255, .88);
+      font-size: 18px;
+      max-width: 900px;
+    }
+
+    .status-box {
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 18px;
+      padding: 20px;
+      align-self: center;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 38px 16px;
+      color: var(--green-900);
+      font-weight: 950;
+      text-transform: uppercase;
+      font-size: 22px;
+      letter-spacing: .01em;
+    }
+
+    .section-title:before,
+    .section-title:after {
+      content: "";
+      height: 2px;
+      background: #a7d0b5;
+      flex: 1;
+    }
+
+    .lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      padding: 0 28px 24px;
+    }
+
+    .lane {
+      background: linear-gradient(180deg, var(--soft), #fff);
+      border: 1px solid #d7e8dd;
+      border-radius: 17px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .lane-head {
+      display: grid;
+      grid-template-columns: 58px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #d5e8dc;
+    }
+
+    .lane-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+    }
+
+    .lane-name {
+      font-size: 22px;
+      font-weight: 950;
+      line-height: 1.05;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    .lane-role {
+      color: var(--muted);
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .flow-stack {
+      padding-top: 16px;
+    }
+
+    .flow-node {
+      position: relative;
+      border: 1px solid #d5e5dc;
+      border-left: 7px solid var(--lane-color);
+      border-radius: 14px;
+      background: #fff;
+      padding: 13px 13px 12px;
+      box-shadow: 0 10px 22px rgba(7, 83, 56, .06);
+    }
+
+    .node-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .step-badge {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--lane-color);
+      color: #fff;
+      font-weight: 950;
+      font-size: 13px;
+    }
+
+    .node-title {
+      font-size: 16px;
+      line-height: 1.15;
+      font-weight: 950;
+      color: #142820;
+      overflow-wrap: anywhere;
+    }
+
+    .node-action {
+      margin-top: 8px;
+      font-size: 15px;
+      line-height: 1.35;
+      font-weight: 800;
+      color: #1f352d;
+      overflow-wrap: anywhere;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 100%;
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: #eff8f2;
+      color: #164a33;
+      border: 1px solid #cce4d5;
+      font-size: 11px;
+      font-weight: 850;
+      overflow-wrap: anywhere;
+    }
+
+    .result-box {
+      margin-top: 10px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--lane-color) 9%, white);
+      border: 1px solid color-mix(in srgb, var(--lane-color) 20%, #d5e5dc);
+      color: #17392c;
+      padding: 9px 10px;
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .note-text {
+      margin-top: 8px;
+      color: #607268;
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .flow-arrow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+      margin: 9px 0;
+      color: var(--lane-color);
+      font-weight: 900;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .flow-arrow:before,
+    .flow-arrow:after {
+      content: "";
+      border-top: 2px dashed color-mix(in srgb, var(--lane-color) 55%, white);
+    }
+
+    .arrow-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 260px;
+      border: 1px solid color-mix(in srgb, var(--lane-color) 25%, #d5e5dc);
+      background: #fff;
+      border-radius: 999px;
+      padding: 5px 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr);
+      gap: 18px;
+      padding: 0 28px 28px;
+    }
+
+    .doc-box {
+      background: linear-gradient(180deg, #fbfefc, #f8fcf9);
+      border: 1px solid #cfe4d7;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .doc-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 12px 18px;
+      border-bottom: 1px solid #dcece1;
+      color: var(--green-900);
+      font-size: 18px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .handoff-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    .handoff-table th,
+    .handoff-table td {
+      border-bottom: 1px solid #e3efe7;
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    .handoff-table th {
+      color: #315346;
+      background: #f0f8f3;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+    }
+
+    .metric {
+      min-height: 106px;
+      padding: 16px;
+      border-right: 1px solid #e0ece5;
+      border-bottom: 1px solid #e0ece5;
+    }
+
+    .metric:nth-child(2n) { border-right: 0; }
+    .metric:nth-last-child(-n + 2) { border-bottom: 0; }
+
+    .metric-icon {
+      color: var(--green-800);
+      margin-bottom: 8px;
+    }
+
+    .metric-title {
+      font-weight: 950;
+      font-size: 14px;
+      color: #1f352d;
+    }
+
+    .metric-text {
+      color: #5f7068;
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .info-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      background: linear-gradient(90deg, var(--green-950), var(--green-800));
+      color: #fff;
+      padding: 16px 36px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .empty-state {
+      border: 1px dashed #bdd7c7;
+      background: #f8fcf9;
+      border-radius: 14px;
+      padding: 18px;
+      color: #61756b;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 50;
+      background: #17221f;
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, .22);
+      font-size: 13px;
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .is-exporting {
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .preview-wrap { max-height: none; }
+    }
+
+    @media (max-width: 640px) {
+      .panel { border-radius: 14px; }
+      .toolbar-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="min-h-screen p-3 sm:p-5 lg:p-6">
+    <div class="app-shell">
+      <aside class="panel p-4 sm:p-5">
+        <div class="flex items-start justify-between gap-3 border-b border-[#dcece1] pb-4">
+          <div>
+            <p class="text-xs font-black uppercase tracking-wide text-[#0b6b45]">Workflow Builder</p>
+            <h1 class="mt-1 text-2xl font-black leading-tight text-[#17221f]">3-PC Infographic</h1>
+          </div>
+          <div class="grid h-12 w-12 place-items-center rounded-2xl bg-[#0b6b45] text-white">
+            <i data-lucide="network" class="h-7 w-7"></i>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="docTitle">Infographic Title</label>
+            <input id="docTitle" data-doc-field="title" />
+          </div>
+          <div>
+            <label for="docDate">Date / Version</label>
+            <input id="docDate" data-doc-field="dateLabel" />
+          </div>
+          <div>
+            <label for="docOwner">Owner / Team</label>
+            <input id="docOwner" data-doc-field="owner" />
+          </div>
+          <div class="sm:col-span-2">
+            <label for="docObjective">Objective</label>
+            <textarea id="docObjective" data-doc-field="objective"></textarea>
+          </div>
+        </div>
+
+        <div class="mt-5 flex gap-2" id="pcTabs"></div>
+
+        <div class="mt-4 border-t border-[#dcece1] pt-4" id="pcForm"></div>
+
+        <div class="mt-5 grid gap-2 sm:grid-cols-2">
+          <button class="toolbar-btn btn-primary" id="previewBtn" type="button">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+            Preview
+          </button>
+          <button class="toolbar-btn btn-secondary" id="shareBtn" type="button">
+            <i data-lucide="link" class="h-4 w-4"></i>
+            Share Link
+          </button>
+          <button class="toolbar-btn btn-dark" id="downloadPngBtn" type="button">
+            <i data-lucide="download" class="h-4 w-4"></i>
+            Download PNG
+          </button>
+          <button class="toolbar-btn btn-secondary" id="downloadJpgBtn" type="button">
+            <i data-lucide="image" class="h-4 w-4"></i>
+            Download JPG
+          </button>
+          <button class="toolbar-btn btn-secondary" id="sampleBtn" type="button">
+            <i data-lucide="sparkles" class="h-4 w-4"></i>
+            Sample
+          </button>
+          <button class="toolbar-btn btn-danger" id="resetBtn" type="button">
+            <i data-lucide="trash-2" class="h-4 w-4"></i>
+            Clear
+          </button>
+        </div>
+      </aside>
+
+      <section class="panel p-3 sm:p-4">
+        <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-lg font-black text-[#17221f]">Preview</h2>
+            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Saved in this browser</p>
+          </div>
+          <div class="flex items-center gap-2 rounded-full border border-[#d6e6dc] bg-[#f6fbf7] px-3 py-2 text-xs font-black uppercase text-[#0b6b45]">
+            <i data-lucide="database" class="h-4 w-4"></i>
+            Local + URL Data
+          </div>
+        </div>
+        <div class="preview-wrap">
+          <article class="infographic" id="infographic"></article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "threePcWorkflowBuilder.v1";
+    const colors = ["#0b6b45", "#0f766e", "#155e75"];
+    const icons = ["keyboard", "settings", "monitor-check"];
+    let activePc = 0;
+    let lastRenderedState = null;
+
+    const sampleState = {
+      title: "3-PC Daily Workflow Map",
+      dateLabel: "Daily Run Documentation",
+      owner: "Automation Team",
+      objective: "Document each PC lane, show macro order, identify trigger handoffs, and confirm the daily workflow is finished successfully.",
+      pcs: [
+        {
+          name: "PC 1",
+          role: "Focus & Creation",
+          steps: [
+            step("Scheduler Start", "Run Task Scheduler job", "Scheduler", "Daily at 07:00", "Windows Task Scheduler", "Starts refresh preparation", "Macro refreshok", "07:00", "Ready", "Main entry point for the daily flow."),
+            step("Refresh OK", "Run macro refreshok", "Previous Step", "Scheduler completed", "Source workbook and current data", "Sends email REFRESHOK", "PC 2 waits for REFRESHOK", "07:05", "Success", "Email subject must match exactly."),
+            step("First Batch", "Run macro firstbatch", "Email", "Triggered by email RefreshOK", "REFRESHOK email confirmation", "Sends email batch 1", "Macro secondbatch", "07:15", "Success", "Starts after mailbox trigger arrives."),
+            step("Second Batch", "Run macro secondbatch", "Email", "Triggered by email batch1", "Batch 1 output", "Sends email batch 2", "PC 3 validates batch status", "07:30", "Success", "Continue until the final batch email is sent.")
+          ]
+        },
+        {
+          name: "PC 2",
+          role: "Processing & Automation",
+          steps: [
+            step("Wait for Refresh", "Watch inbox for REFRESHOK", "Email", "Email subject contains REFRESHOK", "PC 1 refresh email", "Processing queue opens", "Pull Source Files", "07:07", "Waiting", "Mailbox rule starts the automation."),
+            step("Pull Source Files", "Run import and combine macro", "Previous Step", "Refresh email detected", "Excel files, folders, CSV exports", "Combined staging data", "Clean Transform", "07:10", "Success", "Checks files before transformation."),
+            step("Clean Transform", "Run clean_standardize macro", "Previous Step", "Staging data exists", "Raw combined data", "Sends email PROCESSING DONE", "PC 3 dashboard update", "07:25", "Success", "Removes blanks and standardizes columns.")
+          ]
+        },
+        {
+          name: "PC 3",
+          role: "Monitoring & Communication",
+          steps: [
+            step("Open Dashboard", "Open monitoring dashboard", "Manual", "Operator starts dashboard", "Daily dashboard file", "Dashboard is ready", "Watch Queue", "07:00", "Ready", "Used as visual control station."),
+            step("Watch Queue", "Monitor workflow email queue", "Email", "Batch emails and PROCESSING DONE", "PC 1 and PC 2 email outputs", "Status checklist updates", "Validate Batch Status", "07:20", "Running", "Flags missing emails."),
+            step("Validate Batch Status", "Check every batch marker", "Condition", "All expected messages received", "Batch 1, batch 2, processing done", "Flow marked finished", "Daily Summary", "07:45", "Success", "Only mark finished after all indicators pass."),
+            step("Daily Summary", "Send daily status summary", "Previous Step", "Validation complete", "Completed checklist", "Sends final summary email", "End of flow", "07:50", "Finished", "This is the final confirmation.")
+          ]
+        }
+      ]
+    };
+
+    function step(name, action, triggerType, triggerDetail, input, output, next, time, status, notes) {
+      return { id: uid(), name, action, triggerType, triggerDetail, input, output, next, time, status, notes };
+    }
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+    }
+
+    function clone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function getBlankState() {
+      return {
+        title: "3-PC Daily Workflow Map",
+        dateLabel: new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }),
+        owner: "",
+        objective: "Sequential macros, triggers, outputs, and daily finish indicators.",
+        pcs: [
+          { name: "PC 1", role: "Focus & Creation", steps: [blankStep()] },
+          { name: "PC 2", role: "Processing & Automation", steps: [blankStep()] },
+          { name: "PC 3", role: "Monitoring & Communication", steps: [blankStep()] }
+        ]
+      };
+    }
+
+    function blankStep() {
+      return step("New Step", "", "Previous Step", "", "", "", "", "", "", "");
+    }
+
+    function loadState() {
+      const urlState = readStateFromUrl();
+      if (urlState) {
+        showToast("Loaded workflow from shared link");
+        return normalizeState(urlState);
+      }
+
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          return normalizeState(JSON.parse(stored));
+        } catch (error) {
+          return clone(sampleState);
+        }
+      }
+      return clone(sampleState);
+    }
+
+    let state = loadState();
+
+    function normalizeState(input) {
+      const base = getBlankState();
+      const next = { ...base, ...input };
+      next.pcs = [0, 1, 2].map((index) => {
+        const source = input.pcs && input.pcs[index] ? input.pcs[index] : base.pcs[index];
+        const steps = Array.isArray(source.steps) && source.steps.length ? source.steps : [blankStep()];
+        return {
+          name: source.name || base.pcs[index].name,
+          role: source.role || base.pcs[index].role,
+          steps: steps.map((item) => ({
+            ...blankStep(),
+            ...item,
+            id: item.id || uid()
+          }))
+        };
+      });
+      return next;
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const status = document.getElementById("saveStatus");
+      if (status) status.textContent = "Saved in this browser";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function compactState(value) {
+      return {
+        title: value.title,
+        dateLabel: value.dateLabel,
+        owner: value.owner,
+        objective: value.objective,
+        pcs: value.pcs.map((pc) => ({
+          name: pc.name,
+          role: pc.role,
+          steps: pc.steps.map(({ id, ...rest }) => rest)
+        }))
+      };
+    }
+
+    function encodeState(value) {
+      const json = JSON.stringify(compactState(value));
+      const bytes = new TextEncoder().encode(json);
+      let binary = "";
+      bytes.forEach((byte) => binary += String.fromCharCode(byte));
+      return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+    }
+
+    function decodeState(encoded) {
+      const padded = encoded.replaceAll("-", "+").replaceAll("_", "/") + "===".slice((encoded.length + 3) % 4);
+      const binary = atob(padded);
+      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+      return JSON.parse(new TextDecoder().decode(bytes));
+    }
+
+    function readStateFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const data = params.get("data");
+      if (!data) return null;
+      try {
+        return decodeState(data);
+      } catch (error) {
+        showToast("The shared link data could not be read");
+        return null;
+      }
+    }
+
+    function createShareUrl() {
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      url.searchParams.set("data", encodeState(state));
+      return url.toString();
+    }
+
+    function renderAll() {
+      renderDocFields();
+      renderTabs();
+      renderPcForm();
+      renderPreview(state);
+      refreshIcons();
+    }
+
+    function renderDocFields() {
+      document.querySelectorAll("[data-doc-field]").forEach((field) => {
+        field.value = state[field.dataset.docField] || "";
+      });
+    }
+
+    function renderTabs() {
+      const tabs = document.getElementById("pcTabs");
+      tabs.innerHTML = state.pcs.map((pc, index) => `
+        <button class="tab ${index === activePc ? "active" : ""}" type="button" data-tab="${index}">
+          ${escapeHtml(pc.name || `PC ${index + 1}`)}
+        </button>
+      `).join("");
+      tabs.querySelectorAll("[data-tab]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activePc = Number(button.dataset.tab);
+          renderAll();
+        });
+      });
+    }
+
+    function renderPcForm() {
+      const pc = state.pcs[activePc];
+      const holder = document.getElementById("pcForm");
+      holder.innerHTML = `
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label>PC Name</label>
+            <input data-pc-field="name" value="${escapeHtml(pc.name)}" />
+          </div>
+          <div>
+            <label>PC Role</label>
+            <input data-pc-field="role" value="${escapeHtml(pc.role)}" />
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center justify-between gap-3">
+          <h3 class="text-base font-black text-[#17221f]">Steps</h3>
+          <button class="toolbar-btn btn-secondary !min-h-9 !px-3 !py-2" id="addStepBtn" type="button">
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            Add Step
+          </button>
+        </div>
+
+        <div class="mt-3 space-y-3">
+          ${pc.steps.map((item, index) => stepEditorHtml(item, index)).join("")}
+        </div>
+      `;
+
+      holder.querySelectorAll("[data-pc-field]").forEach((field) => {
+        field.addEventListener("input", () => {
+          pc[field.dataset.pcField] = field.value;
+          saveState();
+          renderTabs();
+        });
+      });
+
+      holder.querySelectorAll("[data-step-field]").forEach((field) => {
+        field.addEventListener("input", () => {
+          const stepIndex = Number(field.dataset.stepIndex);
+          const key = field.dataset.stepField;
+          pc.steps[stepIndex][key] = field.value;
+          saveState();
+        });
+      });
+
+      holder.querySelectorAll("[data-remove-step]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const stepIndex = Number(button.dataset.removeStep);
+          if (pc.steps.length === 1) {
+            pc.steps[0] = blankStep();
+          } else {
+            pc.steps.splice(stepIndex, 1);
+          }
+          saveState();
+          renderAll();
+        });
+      });
+
+      document.getElementById("addStepBtn").addEventListener("click", () => {
+        pc.steps.push(blankStep());
+        saveState();
+        renderAll();
+      });
+    }
+
+    function stepEditorHtml(item, index) {
+      return `
+        <section class="step-editor">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-sm font-black text-[#0b6b45]">
+              <span class="grid h-7 w-7 place-items-center rounded-full bg-[#0b6b45] text-xs text-white">${index + 1}</span>
+              Step ${index + 1}
+            </div>
+            <button class="toolbar-btn btn-danger !min-h-8 !px-2 !py-1" type="button" data-remove-step="${index}" title="Remove step">
+              <i data-lucide="trash-2" class="h-4 w-4"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label>Step Name</label>
+              <input data-step-index="${index}" data-step-field="name" value="${escapeHtml(item.name)}" />
+            </div>
+            <div>
+              <label>Time</label>
+              <input data-step-index="${index}" data-step-field="time" value="${escapeHtml(item.time)}" placeholder="07:00" />
+            </div>
+            <div class="sm:col-span-2">
+              <label>Action / Macro Name</label>
+              <input data-step-index="${index}" data-step-field="action" value="${escapeHtml(item.action)}" />
+            </div>
+            <div>
+              <label>Trigger Type</label>
+              <select data-step-index="${index}" data-step-field="triggerType">
+                ${["Scheduler", "Email", "Manual", "Previous Step", "Condition", "Startup"].map((option) => `
+                  <option value="${option}" ${item.triggerType === option ? "selected" : ""}>${option}</option>
+                `).join("")}
+              </select>
+            </div>
+            <div>
+              <label>Trigger Detail</label>
+              <input data-step-index="${index}" data-step-field="triggerDetail" value="${escapeHtml(item.triggerDetail)}" />
+            </div>
+            <div>
+              <label>Input / Dependency</label>
+              <input data-step-index="${index}" data-step-field="input" value="${escapeHtml(item.input)}" />
+            </div>
+            <div>
+              <label>Output / Result</label>
+              <input data-step-index="${index}" data-step-field="output" value="${escapeHtml(item.output)}" />
+            </div>
+            <div>
+              <label>Next Step / Handoff</label>
+              <input data-step-index="${index}" data-step-field="next" value="${escapeHtml(item.next)}" />
+            </div>
+            <div>
+              <label>Status Indicator</label>
+              <input data-step-index="${index}" data-step-field="status" value="${escapeHtml(item.status)}" />
+            </div>
+            <div class="sm:col-span-2">
+              <label>Notes</label>
+              <textarea data-step-index="${index}" data-step-field="notes">${escapeHtml(item.notes)}</textarea>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderPreview(sourceState) {
+      lastRenderedState = clone(sourceState);
+      const target = document.getElementById("infographic");
+      const totalSteps = sourceState.pcs.reduce((sum, pc) => sum + pc.steps.length, 0);
+      const outputs = sourceState.pcs.flatMap((pc) => pc.steps.filter((item) => item.output || item.next));
+
+      target.innerHTML = `
+        <header class="info-header">
+          <div class="flex gap-5">
+            <div class="brand-icon">
+              <i data-lucide="workflow" class="h-12 w-12"></i>
+            </div>
+            <div>
+              <div class="headline">${escapeHtml(sourceState.title || "3-PC Daily Workflow Map")}</div>
+              <div class="subline">${escapeHtml(sourceState.objective || "Sequential macros, triggers, outputs, and finish indicators.")}</div>
+            </div>
+          </div>
+          <aside class="status-box">
+            <div class="flex items-center gap-3 text-xl font-black uppercase">
+              <i data-lucide="target" class="h-8 w-8"></i>
+              Workflow Summary
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-3 text-sm font-bold">
+              <div><span class="block text-2xl font-black">${totalSteps}</span>Total Steps</div>
+              <div><span class="block text-2xl font-black">${outputs.length}</span>Handoffs</div>
+              <div class="col-span-2">${escapeHtml(sourceState.dateLabel || "")}</div>
+              <div class="col-span-2">${escapeHtml(sourceState.owner || "")}</div>
+            </div>
+          </aside>
+        </header>
+
+        <div class="section-title">Sequential PC Workflow</div>
+        <section class="lanes">
+          ${sourceState.pcs.map((pc, index) => laneHtml(pc, index)).join("")}
+        </section>
+
+        <section class="bottom-grid">
+          <div class="doc-box">
+            <div class="doc-title">
+              <i data-lucide="send" class="h-6 w-6"></i>
+              Trigger Handoffs
+            </div>
+            ${handoffTableHtml(sourceState)}
+          </div>
+          <div class="doc-box">
+            <div class="doc-title">
+              <i data-lucide="check-circle-2" class="h-6 w-6"></i>
+              Workflow Control Points
+            </div>
+            <div class="metric-grid">
+              ${controlPointHtml("Triggers", "mail-check", "Scheduler, email, manual, and condition-based starts are documented.")}
+              ${controlPointHtml("Outputs", "send-horizontal", "Emails, status flags, completed files, and finish markers are visible.")}
+              ${controlPointHtml("Dependencies", "git-branch", "Inputs and handoffs show where each step receives its data.")}
+              ${controlPointHtml("Finish", "badge-check", "Final status confirms when the full daily routine is complete.")}
+            </div>
+          </div>
+        </section>
+
+        <footer class="info-footer">
+          <div class="flex items-center gap-3">
+            <i data-lucide="heart" class="h-7 w-7"></i>
+            Daily workflow documentation
+          </div>
+          <div class="flex items-center gap-3">
+            <i data-lucide="bar-chart-3" class="h-7 w-7"></i>
+            Clean steps. Clear triggers. Reliable handoffs.
+          </div>
+        </footer>
+      `;
+      refreshIcons();
+    }
+
+    function laneHtml(pc, index) {
+      const color = colors[index];
+      const icon = icons[index];
+      const steps = pc.steps.filter((item) => Object.values(item).some(Boolean));
+      return `
+        <div class="lane" style="--lane-color: ${color}">
+          <div class="lane-head">
+            <div class="lane-icon" style="background: ${color}">
+              <i data-lucide="${icon}" class="h-8 w-8"></i>
+            </div>
+            <div>
+              <div class="lane-name" style="color: ${color}">${escapeHtml(pc.name || `PC ${index + 1}`)}</div>
+              <div class="lane-role">${escapeHtml(pc.role || "")}</div>
+            </div>
+          </div>
+          <div class="flow-stack">
+            ${steps.length ? steps.map((item, stepIndex) => `
+              ${flowNodeHtml(item, stepIndex)}
+              ${stepIndex < steps.length - 1 ? arrowHtml(item, steps[stepIndex + 1]) : ""}
+            `).join("") : `<div class="empty-state">No steps added yet.</div>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function flowNodeHtml(item, index) {
+      return `
+        <article class="flow-node">
+          <div class="node-top">
+            <div class="step-badge">${index + 1}</div>
+            <div class="min-w-0">
+              <div class="node-title">${escapeHtml(item.name || `Step ${index + 1}`)}</div>
+              ${item.time ? `<div class="mt-1 text-xs font-black uppercase text-[#6b7d74]">${escapeHtml(item.time)}</div>` : ""}
+            </div>
+          </div>
+          ${item.action ? `<div class="node-action">${escapeHtml(item.action)}</div>` : ""}
+          <div class="chip-row">
+            ${item.triggerType ? chipHtml("zap", item.triggerType) : ""}
+            ${item.triggerDetail ? chipHtml("mail", item.triggerDetail) : ""}
+            ${item.status ? chipHtml("check", item.status) : ""}
+          </div>
+          ${item.input ? `<div class="note-text"><strong>Input:</strong> ${escapeHtml(item.input)}</div>` : ""}
+          ${item.output ? `<div class="result-box"><strong>Output:</strong> ${escapeHtml(item.output)}</div>` : ""}
+          ${item.next ? `<div class="note-text"><strong>Next:</strong> ${escapeHtml(item.next)}</div>` : ""}
+          ${item.notes ? `<div class="note-text"><strong>Notes:</strong> ${escapeHtml(item.notes)}</div>` : ""}
+        </article>
+      `;
+    }
+
+    function chipHtml(icon, text) {
+      return `<span class="chip"><i data-lucide="${icon}" class="h-3.5 w-3.5"></i>${escapeHtml(text)}</span>`;
+    }
+
+    function arrowHtml(current, next) {
+      const label = current.output || next.triggerDetail || "Next step";
+      return `
+        <div class="flow-arrow">
+          <span class="arrow-pill">
+            <i data-lucide="arrow-down" class="h-4 w-4"></i>
+            ${escapeHtml(label)}
+          </span>
+        </div>
+      `;
+    }
+
+    function handoffTableHtml(value) {
+      const rows = [];
+      value.pcs.forEach((pc) => {
+        pc.steps.forEach((item, index) => {
+          if (item.output || item.next || item.triggerDetail) {
+            rows.push({ pc: pc.name, step: item.name || `Step ${index + 1}`, trigger: item.triggerDetail || item.triggerType, output: item.output, next: item.next });
+          }
+        });
+      });
+
+      if (!rows.length) {
+        return `<div class="empty-state m-4">No handoffs added yet.</div>`;
+      }
+
+      return `
+        <table class="handoff-table">
+          <thead>
+            <tr>
+              <th style="width: 16%">PC</th>
+              <th style="width: 22%">Step</th>
+              <th style="width: 22%">Trigger</th>
+              <th style="width: 22%">Output</th>
+              <th style="width: 18%">Next</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((row) => `
+              <tr>
+                <td>${escapeHtml(row.pc)}</td>
+                <td>${escapeHtml(row.step)}</td>
+                <td>${escapeHtml(row.trigger)}</td>
+                <td>${escapeHtml(row.output)}</td>
+                <td>${escapeHtml(row.next)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function controlPointHtml(title, icon, text) {
+      return `
+        <div class="metric">
+          <i data-lucide="${icon}" class="metric-icon h-7 w-7"></i>
+          <div class="metric-title">${escapeHtml(title)}</div>
+          <div class="metric-text">${escapeHtml(text)}</div>
+        </div>
+      `;
+    }
+
+    async function downloadImage(type) {
+      const node = document.getElementById("infographic");
+      if (!window.html2canvas) {
+        showToast("Download library is still loading. Try again in a moment.");
+        return;
+      }
+      renderPreview(lastRenderedState || state);
+      node.classList.add("is-exporting");
+      showToast("Preparing image...");
+      const canvas = await html2canvas(node, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true,
+        windowWidth: node.scrollWidth,
+        windowHeight: node.scrollHeight
+      });
+      node.classList.remove("is-exporting");
+      const mime = type === "jpg" ? "image/jpeg" : "image/png";
+      const extension = type === "jpg" ? "jpg" : "png";
+      const link = document.createElement("a");
+      link.download = `${slugify(state.title || "3pc-workflow")}.${extension}`;
+      link.href = canvas.toDataURL(mime, type === "jpg" ? 0.96 : 1);
+      link.click();
+      showToast(`Downloaded ${extension.toUpperCase()}`);
+    }
+
+    function slugify(value) {
+      return String(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "workflow";
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function refreshIcons() {
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+    document.addEventListener("input", (event) => {
+      const field = event.target.closest("[data-doc-field]");
+      if (!field) return;
+      state[field.dataset.docField] = field.value;
+      saveState();
+    });
+
+    document.getElementById("previewBtn").addEventListener("click", () => {
+      saveState();
+      renderPreview(state);
+      showToast("Preview updated");
+    });
+
+    document.getElementById("shareBtn").addEventListener("click", async () => {
+      saveState();
+      const shareUrl = createShareUrl();
+      window.history.replaceState(null, "", shareUrl);
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showToast("Share link copied");
+      } catch (error) {
+        prompt("Copy this share link:", shareUrl);
+      }
+    });
+
+    document.getElementById("downloadPngBtn").addEventListener("click", () => downloadImage("png"));
+    document.getElementById("downloadJpgBtn").addEventListener("click", () => downloadImage("jpg"));
+
+    document.getElementById("sampleBtn").addEventListener("click", () => {
+      state = clone(sampleState);
+      activePc = 0;
+      saveState();
+      renderAll();
+      showToast("Sample loaded");
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("Clear the current workflow and start fresh?")) return;
+      state = getBlankState();
+      activePc = 0;
+      saveState();
+      renderAll();
+      showToast("Workflow cleared");
+    });
+
+    renderAll();
+    saveState();
+  </script>
+</body>
+</html>
