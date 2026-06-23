@@ -333,8 +333,8 @@
     .result-box {
       margin-top: 10px;
       border-radius: 10px;
-      background: color-mix(in srgb, var(--lane-color) 9%, white);
-      border: 1px solid color-mix(in srgb, var(--lane-color) 20%, #d5e5dc);
+      background: #f1faf4;
+      border: 1px solid #cfe4d7;
       color: #17392c;
       padding: 9px 10px;
       font-size: 13px;
@@ -365,7 +365,7 @@
     .flow-arrow:before,
     .flow-arrow:after {
       content: "";
-      border-top: 2px dashed color-mix(in srgb, var(--lane-color) 55%, white);
+      border-top: 2px dashed #9dccad;
     }
 
     .arrow-pill {
@@ -373,7 +373,7 @@
       align-items: center;
       gap: 6px;
       max-width: 260px;
-      border: 1px solid color-mix(in srgb, var(--lane-color) 25%, #d5e5dc);
+      border: 1px solid #cfe4d7;
       background: #fff;
       border-radius: 999px;
       padding: 5px 8px;
@@ -1140,24 +1140,38 @@
         showToast("Download library is still loading. Try again in a moment.");
         return;
       }
-      renderPreview(lastRenderedState || state);
-      node.classList.add("is-exporting");
-      showToast("Preparing image...");
-      const canvas = await html2canvas(node, {
-        backgroundColor: "#ffffff",
-        scale: 2,
-        useCORS: true,
-        windowWidth: node.scrollWidth,
-        windowHeight: node.scrollHeight
-      });
-      node.classList.remove("is-exporting");
-      const mime = type === "jpg" ? "image/jpeg" : "image/png";
-      const extension = type === "jpg" ? "jpg" : "png";
-      const link = document.createElement("a");
-      link.download = `${slugify(state.title || "3pc-workflow")}.${extension}`;
-      link.href = canvas.toDataURL(mime, type === "jpg" ? 0.96 : 1);
-      link.click();
-      showToast(`Downloaded ${extension.toUpperCase()}`);
+      try {
+        renderPreview(lastRenderedState || state);
+        node.classList.add("is-exporting");
+        showToast("Preparing image...");
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        const canvas = await html2canvas(node, {
+          backgroundColor: "#ffffff",
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          width: node.scrollWidth,
+          height: node.scrollHeight,
+          windowWidth: node.scrollWidth,
+          windowHeight: node.scrollHeight
+        });
+        const mime = type === "jpg" ? "image/jpeg" : "image/png";
+        const extension = type === "jpg" ? "jpg" : "png";
+        const link = document.createElement("a");
+        link.download = `${slugify(state.title || "3pc-workflow")}.${extension}`;
+        link.href = canvas.toDataURL(mime, type === "jpg" ? 0.96 : 1);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        showToast(`Downloaded ${extension.toUpperCase()}`);
+      } catch (error) {
+        console.error(error);
+        showToast("Download failed. Please refresh and try again.");
+        alert("Download failed. Please refresh the page and try again. If it still fails, make sure the page is opened from GitHub Pages, not from the GitHub file preview.");
+      } finally {
+        node.classList.remove("is-exporting");
+      }
     }
 
     function slugify(value) {
