@@ -136,8 +136,9 @@
     }
 
     .preview-stage {
-      width: max-content;
-      zoom: .75;
+      width: 1110px;
+      transform: scale(.75);
+      transform-origin: top left;
     }
 
     .infographic {
@@ -511,6 +512,16 @@
     .is-exporting {
       box-shadow: none;
       border-radius: 0;
+    }
+
+    .export-host {
+      position: fixed;
+      left: -10000px;
+      top: 0;
+      z-index: -1;
+      width: 1480px;
+      background: #fff;
+      pointer-events: none;
     }
 
     @media (max-width: 1180px) {
@@ -1112,6 +1123,14 @@
         </footer>
       `;
       refreshIcons();
+      syncPreviewStageHeight();
+    }
+
+    function syncPreviewStageHeight() {
+      const stage = document.querySelector(".preview-stage");
+      const node = document.getElementById("infographic");
+      if (!stage || !node) return;
+      stage.style.height = `${node.offsetHeight * 0.75}px`;
     }
 
     function laneHtml(pc, index) {
@@ -1230,26 +1249,51 @@
     }
 
     async function downloadImage(type) {
-      const node = document.getElementById("infographic");
+      const previewNode = document.getElementById("infographic");
       if (!window.html2canvas) {
         showToast("Download library is still loading. Try again in a moment.");
         return;
       }
+      let host = null;
+      let node = null;
       try {
         renderPreview(lastRenderedState || state);
-        node.classList.add("is-exporting");
         showToast("Preparing image...");
-        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        host = document.createElement("div");
+        host.className = "export-host";
+        node = previewNode.cloneNode(true);
+        node.id = "infographic-export";
+        node.classList.add("is-exporting");
+        host.appendChild(node);
+        document.body.appendChild(host);
+
+        if (window.lucide) {
+          lucide.createIcons({
+            attrs: { "stroke-width": 2.4 },
+            nameAttr: "data-lucide"
+          });
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        const exportWidth = Math.ceil(node.getBoundingClientRect().width);
+        const exportHeight = Math.ceil(node.getBoundingClientRect().height);
         const canvas = await html2canvas(node, {
           backgroundColor: "#ffffff",
           scale: 2,
           useCORS: true,
           allowTaint: true,
           logging: false,
-          width: node.scrollWidth,
-          height: node.scrollHeight,
-          windowWidth: node.scrollWidth,
-          windowHeight: node.scrollHeight
+          width: exportWidth,
+          height: exportHeight,
+          windowWidth: exportWidth,
+          windowHeight: exportHeight,
+          scrollX: 0,
+          scrollY: 0
         });
         const mime = type === "jpg" ? "image/jpeg" : "image/png";
         const extension = type === "jpg" ? "jpg" : "png";
@@ -1265,7 +1309,7 @@
         showToast("Download failed. Please refresh and try again.");
         alert("Download failed. Please refresh the page and try again. If it still fails, make sure the page is opened from GitHub Pages, not from the GitHub file preview.");
       } finally {
-        node.classList.remove("is-exporting");
+        if (host) host.remove();
       }
     }
 
