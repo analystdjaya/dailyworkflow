@@ -135,6 +135,11 @@
       max-height: calc(100vh - 122px);
     }
 
+    .preview-stage {
+      width: max-content;
+      zoom: .75;
+    }
+
     .infographic {
       width: 1480px;
       min-height: 835px;
@@ -247,14 +252,6 @@
       font-weight: 950;
       line-height: 1.05;
       text-transform: uppercase;
-      overflow-wrap: anywhere;
-    }
-
-    .lane-role {
-      color: var(--muted);
-      margin-top: 4px;
-      font-size: 13px;
-      font-weight: 800;
       overflow-wrap: anywhere;
     }
 
@@ -596,15 +593,17 @@
         <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-lg font-black text-[#17221f]">Preview</h2>
-            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Saved in this browser</p>
+            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Saved in this browser and current link</p>
           </div>
           <div class="flex items-center gap-2 rounded-full border border-[#d6e6dc] bg-[#f6fbf7] px-3 py-2 text-xs font-black uppercase text-[#0b6b45]">
             <i data-lucide="database" class="h-4 w-4"></i>
-            Local + URL Data
+            75% View
           </div>
         </div>
         <div class="preview-wrap">
-          <article class="infographic" id="infographic"></article>
+          <div class="preview-stage">
+            <article class="infographic" id="infographic"></article>
+          </div>
         </div>
       </section>
     </div>
@@ -627,7 +626,6 @@
       pcs: [
         {
           name: "PC 1",
-          role: "Focus & Creation",
           steps: [
             step("Scheduler Start", "Run Task Scheduler job", "Scheduler", "Daily at 07:00", "Windows Task Scheduler", "Starts refresh preparation", "Macro refreshok", "07:00", "Ready", "Main entry point for the daily flow."),
             step("Refresh OK", "Run macro refreshok", "Previous Step", "Scheduler completed", "Source workbook and current data", "Sends email REFRESHOK", "PC 2 waits for REFRESHOK", "07:05", "Success", "Email subject must match exactly."),
@@ -637,7 +635,6 @@
         },
         {
           name: "PC 2",
-          role: "Processing & Automation",
           steps: [
             step("Wait for Refresh", "Watch inbox for REFRESHOK", "Email", "Email subject contains REFRESHOK", "PC 1 refresh email", "Processing queue opens", "Pull Source Files", "07:07", "Waiting", "Mailbox rule starts the automation."),
             step("Pull Source Files", "Run import and combine macro", "Previous Step", "Refresh email detected", "Excel files, folders, CSV exports", "Combined staging data", "Clean Transform", "07:10", "Success", "Checks files before transformation."),
@@ -646,7 +643,6 @@
         },
         {
           name: "PC 3",
-          role: "Monitoring & Communication",
           steps: [
             step("Open Dashboard", "Open monitoring dashboard", "Manual", "Operator starts dashboard", "Daily dashboard file", "Dashboard is ready", "Watch Queue", "07:00", "Ready", "Used as visual control station."),
             step("Watch Queue", "Monitor workflow email queue", "Email", "Batch emails and PROCESSING DONE", "PC 1 and PC 2 email outputs", "Status checklist updates", "Validate Batch Status", "07:20", "Running", "Flags missing emails."),
@@ -676,9 +672,9 @@
         owner: "",
         objective: "Sequential macros, triggers, outputs, and daily finish indicators.",
         pcs: [
-          { name: "PC 1", role: "Focus & Creation", steps: [blankStep()] },
-          { name: "PC 2", role: "Processing & Automation", steps: [blankStep()] },
-          { name: "PC 3", role: "Monitoring & Communication", steps: [blankStep()] }
+          { name: "PC 1", steps: [blankStep()] },
+          { name: "PC 2", steps: [blankStep()] },
+          { name: "PC 3", steps: [blankStep()] }
         ]
       };
     }
@@ -715,7 +711,6 @@
         const steps = Array.isArray(source.steps) && source.steps.length ? source.steps : [blankStep()];
         return {
           name: source.name || base.pcs[index].name,
-          role: source.role || base.pcs[index].role,
           steps: steps.map((item) => ({
             ...blankStep(),
             ...item,
@@ -728,8 +723,9 @@
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateCurrentUrl();
       const status = document.getElementById("saveStatus");
-      if (status) status.textContent = "Saved in this browser";
+      if (status) status.textContent = "Saved in this browser and current link";
     }
 
     function escapeHtml(value) {
@@ -749,7 +745,6 @@
         objective: value.objective,
         pcs: value.pcs.map((pc) => ({
           name: pc.name,
-          role: pc.role,
           steps: pc.steps.map(({ id, ...rest }) => rest)
         }))
       };
@@ -790,6 +785,15 @@
       return url.toString();
     }
 
+    function updateCurrentUrl() {
+      try {
+        const shareUrl = createShareUrl();
+        window.history.replaceState(null, "", shareUrl);
+      } catch (error) {
+        console.warn("The workflow is saved locally, but the URL is too large to update.", error);
+      }
+    }
+
     function renderAll() {
       renderDocFields();
       renderTabs();
@@ -823,14 +827,10 @@
       const pc = state.pcs[activePc];
       const holder = document.getElementById("pcForm");
       holder.innerHTML = `
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-3">
           <div>
             <label>PC Name</label>
             <input data-pc-field="name" value="${escapeHtml(pc.name)}" />
-          </div>
-          <div>
-            <label>PC Role</label>
-            <input data-pc-field="role" value="${escapeHtml(pc.role)}" />
           </div>
         </div>
 
@@ -1031,7 +1031,7 @@
             </div>
             <div>
               <div class="lane-name" style="color: ${color}">${escapeHtml(pc.name || `PC ${index + 1}`)}</div>
-              <div class="lane-role">${escapeHtml(pc.role || "")}</div>
+              <div class="mt-1 text-xs font-black uppercase text-[#607268]">${pc.steps.length} documented steps</div>
             </div>
           </div>
           <div class="flow-stack">
