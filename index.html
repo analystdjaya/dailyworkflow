@@ -142,7 +142,6 @@
 
     .infographic {
       width: 1480px;
-      min-height: 835px;
       background: var(--paper);
       border: 1px solid #c7dfcf;
       border-radius: 20px;
@@ -381,6 +380,7 @@
       display: grid;
       grid-template-columns: minmax(0, 1.35fr) minmax(360px, .65fr);
       gap: 18px;
+      align-items: start;
       padding: 0 28px 28px;
     }
 
@@ -593,7 +593,7 @@
         <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-lg font-black text-[#17221f]">Preview</h2>
-            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Saved in this browser and current link</p>
+            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Saved in this browser</p>
           </div>
           <div class="flex items-center gap-2 rounded-full border border-[#d6e6dc] bg-[#f6fbf7] px-3 py-2 text-xs font-black uppercase text-[#0b6b45]">
             <i data-lucide="database" class="h-4 w-4"></i>
@@ -683,8 +683,8 @@
       return step("New Step", "", "Previous Step", "", "", "", "", "", "", "");
     }
 
-    function loadState() {
-      const urlState = readStateFromUrl();
+    async function loadState() {
+      const urlState = await readStateFromUrl();
       if (urlState) {
         showToast("Loaded workflow from shared link");
         return normalizeState(urlState);
@@ -701,7 +701,7 @@
       return clone(sampleState);
     }
 
-    let state = loadState();
+    let state = clone(sampleState);
 
     function normalizeState(input) {
       const base = getBlankState();
@@ -723,9 +723,8 @@
 
     function saveState() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      updateCurrentUrl();
       const status = document.getElementById("saveStatus");
-      if (status) status.textContent = "Saved in this browser and current link";
+      if (status) status.textContent = "Saved in this browser";
     }
 
     function escapeHtml(value) {
@@ -738,6 +737,14 @@
     }
 
     function compactState(value) {
+      const trimArray = (items) => {
+        const trimmed = [...items];
+        while (trimmed.length && (trimmed[trimmed.length - 1] === "" || trimmed[trimmed.length - 1] == null)) {
+          trimmed.pop();
+        }
+        return trimmed;
+      };
+
       return {
         v: 2,
         t: value.title || "",
@@ -746,7 +753,7 @@
         j: value.objective || "",
         p: value.pcs.map((pc) => [
           pc.name || "",
-          pc.steps.map((item) => [
+          pc.steps.map((item) => trimArray([
             item.name || "",
             item.action || "",
             item.triggerType || "",
@@ -757,7 +764,7 @@
             item.time || "",
             item.status || "",
             item.notes || ""
-          ])
+          ]))
         ])
       };
     }
@@ -798,48 +805,88 @@
       };
     }
 
-    function encodeState(value) {
+    async function encodeState(value) {
       const json = JSON.stringify(compactState(value));
+      if (window.CompressionStream) {
+        return compressText(json);
+      }
+      return encodePlainText(json);
+    }
+
+    function encodePlainText(json) {
       const bytes = new TextEncoder().encode(json);
       let binary = "";
       bytes.forEach((byte) => binary += String.fromCharCode(byte));
+      return `p.${btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "")}`;
+    }
+
+    async function compressText(text) {
+      try {
+        const rawStream = new Blob([text]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+        const rawCompressed = new Uint8Array(await new Response(rawStream).arrayBuffer());
+        return `r.${bytesToBase64Url(rawCompressed)}`;
+      } catch (error) {
+        const stream = new Blob([text]).stream().pipeThrough(new CompressionStream("gzip"));
+        const compressed = new Uint8Array(await new Response(stream).arrayBuffer());
+        return `z.${bytesToBase64Url(compressed)}`;
+      }
+    }
+
+    function bytesToBase64Url(bytes) {
+      let binary = "";
+      const chunkSize = 0x8000;
+      for (let index = 0; index < bytes.length; index += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+      }
       return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
     }
 
-    function decodeState(encoded) {
+    function base64UrlToBytes(encoded) {
       const padded = encoded.replaceAll("-", "+").replaceAll("_", "/") + "===".slice((encoded.length + 3) % 4);
       const binary = atob(padded);
-      const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+      return Uint8Array.from(binary, (char) => char.charCodeAt(0));
+    }
+
+    async function decodeState(encoded) {
+      if (encoded.startsWith("r.")) {
+        const bytes = base64UrlToBytes(encoded.slice(2));
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+        const json = await new Response(stream).text();
+        return expandCompactState(JSON.parse(json));
+      }
+      if (encoded.startsWith("z.")) {
+        const bytes = base64UrlToBytes(encoded.slice(2));
+        const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+        const json = await new Response(stream).text();
+        return expandCompactState(JSON.parse(json));
+      }
+      const plain = encoded.startsWith("p.") ? encoded.slice(2) : encoded;
+      const bytes = base64UrlToBytes(plain);
       return expandCompactState(JSON.parse(new TextDecoder().decode(bytes)));
     }
 
-    function readStateFromUrl() {
+    async function readStateFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const data = params.get("w") || params.get("data");
+      const rawData = params.get("s");
+      const compressedData = params.get("z");
+      const data = rawData ? `r.${rawData}` : (compressedData ? `z.${compressedData}` : (params.get("w") || params.get("data")));
       if (!data) return null;
       try {
-        return decodeState(data);
+        return await decodeState(data);
       } catch (error) {
         showToast("The shared link data could not be read");
         return null;
       }
     }
 
-    function createShareUrl() {
+    async function createShareUrl() {
       const url = new URL(window.location.href);
       url.search = "";
       url.hash = "";
-      url.searchParams.set("w", encodeState(state));
+      const encoded = await encodeState(state);
+      const key = encoded.startsWith("r.") ? "s" : (encoded.startsWith("z.") ? "z" : "w");
+      url.searchParams.set(key, encoded.slice(2));
       return url.toString();
-    }
-
-    function updateCurrentUrl() {
-      try {
-        const shareUrl = createShareUrl();
-        window.history.replaceState(null, "", shareUrl);
-      } catch (error) {
-        console.warn("The workflow is saved locally, but the URL is too large to update.", error);
-      }
     }
 
     function renderAll() {
@@ -1256,13 +1303,19 @@
 
     document.getElementById("shareBtn").addEventListener("click", async () => {
       saveState();
-      const shareUrl = createShareUrl();
-      window.history.replaceState(null, "", shareUrl);
+      showToast("Creating compressed link...");
       try {
-        await navigator.clipboard.writeText(shareUrl);
-        showToast("Share link copied");
+        const shareUrl = await createShareUrl();
+        window.history.replaceState(null, "", shareUrl);
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          showToast(`Shorter link copied (${shareUrl.length} characters)`);
+        } catch (error) {
+          prompt("Copy this share link:", shareUrl);
+        }
       } catch (error) {
-        prompt("Copy this share link:", shareUrl);
+        console.error(error);
+        showToast("Short link could not be created in this browser");
       }
     });
 
@@ -1286,8 +1339,13 @@
       showToast("Workflow cleared");
     });
 
-    renderAll();
-    saveState();
+    async function initApp() {
+      state = await loadState();
+      renderAll();
+      saveState();
+    }
+
+    initApp();
   </script>
 </body>
 </html>
