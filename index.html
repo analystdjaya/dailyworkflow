@@ -739,13 +739,61 @@
 
     function compactState(value) {
       return {
-        title: value.title,
-        dateLabel: value.dateLabel,
-        owner: value.owner,
-        objective: value.objective,
-        pcs: value.pcs.map((pc) => ({
-          name: pc.name,
-          steps: pc.steps.map(({ id, ...rest }) => rest)
+        v: 2,
+        t: value.title || "",
+        d: value.dateLabel || "",
+        o: value.owner || "",
+        j: value.objective || "",
+        p: value.pcs.map((pc) => [
+          pc.name || "",
+          pc.steps.map((item) => [
+            item.name || "",
+            item.action || "",
+            item.triggerType || "",
+            item.triggerDetail || "",
+            item.input || "",
+            item.output || "",
+            item.next || "",
+            item.time || "",
+            item.status || "",
+            item.notes || ""
+          ])
+        ])
+      };
+    }
+
+    function expandCompactState(value) {
+      if (value && value.v === 2 && Array.isArray(value.p)) {
+        return {
+          title: value.t || "",
+          dateLabel: value.d || "",
+          owner: value.o || "",
+          objective: value.j || "",
+          pcs: value.p.map((pc, pcIndex) => ({
+            name: pc[0] || `PC ${pcIndex + 1}`,
+            steps: Array.isArray(pc[1]) ? pc[1].map((item) => ({
+              name: item[0] || "",
+              action: item[1] || "",
+              triggerType: item[2] || "",
+              triggerDetail: item[3] || "",
+              input: item[4] || "",
+              output: item[5] || "",
+              next: item[6] || "",
+              time: item[7] || "",
+              status: item[8] || "",
+              notes: item[9] || ""
+            })) : [blankStep()]
+          }))
+        };
+      }
+      return {
+        title: value.title || "",
+        dateLabel: value.dateLabel || "",
+        owner: value.owner || "",
+        objective: value.objective || "",
+        pcs: (value.pcs || []).map((pc) => ({
+          name: pc.name || "",
+          steps: (pc.steps || []).map(({ id, ...rest }) => rest)
         }))
       };
     }
@@ -762,12 +810,12 @@
       const padded = encoded.replaceAll("-", "+").replaceAll("_", "/") + "===".slice((encoded.length + 3) % 4);
       const binary = atob(padded);
       const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-      return JSON.parse(new TextDecoder().decode(bytes));
+      return expandCompactState(JSON.parse(new TextDecoder().decode(bytes)));
     }
 
     function readStateFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const data = params.get("data");
+      const data = params.get("w") || params.get("data");
       if (!data) return null;
       try {
         return decodeState(data);
@@ -781,7 +829,7 @@
       const url = new URL(window.location.href);
       url.search = "";
       url.hash = "";
-      url.searchParams.set("data", encodeState(state));
+      url.searchParams.set("w", encodeState(state));
       return url.toString();
     }
 
