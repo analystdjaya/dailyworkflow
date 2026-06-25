@@ -730,24 +730,6 @@
       transform: translateY(0);
     }
 
-    .is-exporting {
-      box-shadow: none;
-      border-radius: 0;
-    }
-
-    .is-exporting .title-copy {
-      position: static;
-      top: auto;
-    }
-
-    .is-exporting .headline {
-      line-height: .92;
-    }
-
-    .is-exporting .subline {
-      margin-top: 6px;
-    }
-
     .export-host {
       position: fixed;
       left: -10000px;
@@ -1882,7 +1864,6 @@
         host.className = "export-host";
         node = previewNode.cloneNode(true);
         node.id = "infographic-export";
-        node.classList.add("is-exporting");
         host.appendChild(node);
         document.body.appendChild(host);
 
