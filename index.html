@@ -1920,10 +1920,9 @@
           showToast("Download cancelled");
           return;
         }
-        const canvas = await html2canvas(previewStage, {
+        const exportOptions = {
           backgroundColor: "#ffffff",
           scale: 2,
-          foreignObjectRendering: true,
           useCORS: true,
           allowTaint: true,
           logging: false,
@@ -1934,7 +1933,19 @@
           windowHeight: exportHeight,
           scrollX: 0,
           scrollY: 0
-        });
+        };
+        let canvas;
+        try {
+          canvas = await html2canvas(previewStage, {
+            ...exportOptions,
+            foreignObjectRendering: true
+          });
+          if (isBlankCanvas(canvas)) {
+            canvas = await html2canvas(previewStage, exportOptions);
+          }
+        } catch (error) {
+          canvas = await html2canvas(previewStage, exportOptions);
+        }
         const mime = type === "jpg" ? "image/jpeg" : "image/png";
         const extension = type === "jpg" ? "jpg" : "png";
         const link = document.createElement("a");
@@ -1951,6 +1962,26 @@
       } finally {
         downloadButtons.forEach((button) => button.disabled = false);
       }
+    }
+
+    function isBlankCanvas(canvas) {
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return true;
+
+      const step = Math.max(20, Math.floor(Math.min(canvas.width, canvas.height) / 80));
+      try {
+        for (let y = 0; y < canvas.height; y += step) {
+          for (let x = 0; x < canvas.width; x += step) {
+            const [red, green, blue, alpha] = context.getImageData(x, y, 1, 1).data;
+            if (alpha > 0 && (red < 245 || green < 245 || blue < 245)) {
+              return false;
+            }
+          }
+        }
+      } catch (error) {
+        return false;
+      }
+      return true;
     }
 
     function downloadJson() {
