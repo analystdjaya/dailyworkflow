@@ -402,13 +402,12 @@
     }
 
     .chip {
-      display: inline-grid;
-      grid-template-columns: auto minmax(0, auto);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      column-gap: 5px;
+      gap: 5px;
       max-width: 100%;
-      min-height: 28px;
+      height: 28px;
       border-radius: 999px;
       padding: 0 8px;
       background: #eff8f2;
@@ -427,8 +426,9 @@
     }
 
     .chip-label {
-      display: block;
-      min-width: 0;
+      display: inline-block;
+      position: relative;
+      top: -1px;
       line-height: 1;
       white-space: nowrap;
     }
@@ -472,13 +472,12 @@
     }
 
     .arrow-pill {
-      display: inline-grid;
-      grid-template-columns: auto minmax(0, auto);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      column-gap: 6px;
+      gap: 6px;
       max-width: 260px;
-      min-height: 28px;
+      height: 28px;
       border: 1px solid #cfe4d7;
       background: #fff;
       border-radius: 999px;
@@ -495,7 +494,9 @@
     }
 
     .arrow-label {
-      display: block;
+      display: inline-block;
+      position: relative;
+      top: -1px;
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -652,13 +653,12 @@
     }
 
     .error-meta {
-      display: inline-grid;
-      grid-template-columns: auto minmax(0, auto);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      column-gap: 6px;
+      gap: 6px;
       margin-bottom: 8px;
-      min-height: 28px;
+      height: 28px;
       border-radius: 999px;
       background: #f6fbf7;
       border: 1px solid #d6e6dc;
@@ -677,8 +677,9 @@
     }
 
     .error-meta-label {
-      display: block;
-      min-width: 0;
+      display: inline-block;
+      position: relative;
+      top: -1px;
       line-height: 1;
       white-space: nowrap;
     }
