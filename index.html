@@ -184,9 +184,8 @@
     }
 
     .preview-stage {
-      width: 1480px;
-      transform: scale(var(--preview-scale, .75));
-      transform-origin: top left;
+      width: calc(1480px * var(--preview-scale, .75));
+      height: auto;
     }
 
     .infographic {
@@ -196,6 +195,11 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 18px 55px rgba(7, 83, 56, .10);
+    }
+
+    .preview-stage .infographic {
+      transform: scale(var(--preview-scale, .75));
+      transform-origin: top left;
     }
 
     .info-header {
@@ -1276,7 +1280,7 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
         ? Math.min(1, Math.max(0.2, ((wrap?.clientWidth || 1110) - 28) / node.offsetWidth))
         : Number(previewZoom);
       stage.style.setProperty("--preview-scale", selectedScale);
-      stage.style.width = `${node.offsetWidth}px`;
+      stage.style.width = `${node.offsetWidth * selectedScale}px`;
       stage.style.height = `${node.offsetHeight * selectedScale}px`;
       updateZoomButtons();
     }
