@@ -213,11 +213,20 @@
       display: grid;
       grid-template-columns: minmax(0, 1.45fr) minmax(330px, .55fr);
       gap: 28px;
+      align-items: center;
       padding: 32px 38px 24px;
       background:
         linear-gradient(90deg, rgba(7, 83, 56, .96), rgba(12, 111, 77, .92)),
         var(--green-900);
       color: #fff;
+    }
+
+    .info-title-row {
+      display: grid;
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 22px;
+      align-items: center;
+      min-width: 0;
     }
 
     .brand-icon {
@@ -230,18 +239,27 @@
       border: 1px solid rgba(255, 255, 255, .24);
     }
 
+    .title-copy {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      justify-content: center;
+    }
+
     .headline {
-      font-size: 52px;
-      line-height: .96;
+      font-size: 50px;
+      line-height: 1;
       font-weight: 950;
       letter-spacing: 0;
       text-transform: uppercase;
+      text-wrap: balance;
     }
 
     .subline {
-      margin-top: 12px;
+      margin-top: 8px;
       color: rgba(255, 255, 255, .88);
-      font-size: 18px;
+      font-size: 17px;
+      line-height: 1.38;
       max-width: 900px;
     }
 
@@ -251,6 +269,17 @@
       border-radius: 18px;
       padding: 20px;
       align-self: center;
+    }
+
+    .summary-title {
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      font-size: 20px;
+      font-weight: 950;
+      line-height: 1;
+      text-transform: uppercase;
     }
 
     .section-title {
@@ -1559,17 +1588,17 @@
 
       target.innerHTML = `
         <header class="info-header">
-          <div class="flex gap-5">
+          <div class="info-title-row">
             <div class="brand-icon">
               <i data-lucide="workflow" class="h-12 w-12"></i>
             </div>
-            <div>
+            <div class="title-copy">
               <div class="headline">${escapeHtml(sourceState.title || "3-PC Daily Workflow Map")}</div>
               <div class="subline">${escapeHtml(sourceState.objective || "Sequential macros, triggers, outputs, and finish indicators.")}</div>
             </div>
           </div>
           <aside class="status-box">
-            <div class="flex items-center gap-3 text-xl font-black uppercase">
+            <div class="summary-title">
               <i data-lucide="target" class="h-8 w-8"></i>
               Workflow Summary
             </div>
