@@ -209,6 +209,14 @@
       transform-origin: top left;
     }
 
+    .preview-stage.export-capture {
+      width: 1480px !important;
+    }
+
+    .preview-stage.export-capture .infographic {
+      transform: none !important;
+    }
+
     .info-header {
       display: grid;
       grid-template-columns: minmax(0, 1.45fr) minmax(330px, .55fr);
@@ -1908,9 +1916,11 @@
         }
         await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-        const exportRect = previewStage.getBoundingClientRect();
-        const exportWidth = Math.ceil(exportRect.width);
-        const exportHeight = Math.ceil(exportRect.height);
+        previewStage.classList.add("export-capture");
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        const exportWidth = Math.ceil(previewNode.offsetWidth);
+        const exportHeight = Math.ceil(previewNode.offsetHeight);
         if (exportHeight > 9000 && !confirm("This workflow is very tall and may take a moment to export. Continue?")) {
           showToast("Download cancelled");
           return;
@@ -1929,7 +1939,7 @@
           scrollX: 0,
           scrollY: 0
         };
-        const canvas = await html2canvas(previewStage, exportOptions);
+        const canvas = await html2canvas(previewNode, exportOptions);
         const mime = type === "jpg" ? "image/jpeg" : "image/png";
         const extension = type === "jpg" ? "jpg" : "png";
         const link = document.createElement("a");
@@ -1944,6 +1954,7 @@
         showToast("Download failed. Please refresh and try again.");
         alert("Download failed. Please refresh the page and try again. If it still fails, make sure the page is opened from GitHub Pages, not from the GitHub file preview.");
       } finally {
+        previewStage.classList.remove("export-capture");
         downloadButtons.forEach((button) => button.disabled = false);
       }
     }
