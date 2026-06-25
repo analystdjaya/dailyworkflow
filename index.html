@@ -821,6 +821,8 @@
     const colors = ["#0b6b45", "#0f766e", "#155e75"];
     const icons = ["keyboard", "settings", "monitor-check"];
     let activePc = 0;
+    let activeStep = 0;
+    let activeError = 0;
     let lastRenderedState = null;
     let previewZoom = "fit";
     let saveTimer = null;
@@ -1209,6 +1211,7 @@
       tabs.querySelectorAll("[data-tab]").forEach((button) => {
         button.addEventListener("click", () => {
           activePc = Number(button.dataset.tab);
+          activeStep = 0;
           renderAll();
         });
         button.addEventListener("keydown", (event) => {
@@ -1218,6 +1221,7 @@
           if (event.key === "Home") activePc = 0;
           else if (event.key === "End") activePc = state.pcs.length - 1;
           else activePc = (activePc + (event.key === "ArrowRight" ? 1 : -1) + state.pcs.length) % state.pcs.length;
+          activeStep = 0;
           renderAll();
           document.querySelector(`[data-tab="${activePc}"]`)?.focus();
         });
@@ -1230,6 +1234,10 @@
       holder.setAttribute("role", "tabpanel");
       holder.setAttribute("tabindex", "0");
       holder.setAttribute("aria-labelledby", `pc-tab-${activePc}`);
+      activeStep = Math.min(Math.max(activeStep, 0), Math.max(pc.steps.length - 1, 0));
+      activeError = Math.min(Math.max(activeError, 0), Math.max((state.errors || []).length - 1, 0));
+      const selectedStep = pc.steps[activeStep] || blankStep();
+      const selectedError = (state.errors || [])[activeError];
       const pcNameId = `pc-${activePc}-name`;
       holder.innerHTML = `
         <div class="grid grid-cols-1 gap-3">
@@ -1247,8 +1255,19 @@
           </button>
         </div>
 
-        <div class="mt-3 space-y-3">
-          ${pc.steps.map((item, index) => stepEditorHtml(item, index)).join("")}
+        <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="stepSelect">Step Number / Name</label>
+            <select id="stepSelect">
+              ${pc.steps.map((item, index) => `
+                <option value="${index}" ${index === activeStep ? "selected" : ""}>Step ${index + 1}: ${escapeHtml(item.name || "New Step")}</option>
+              `).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          ${stepEditorHtml(selectedStep, activeStep)}
         </div>
 
         <div class="mt-5 border-t border-[#dcece1] pt-4">
@@ -1259,11 +1278,34 @@
               Add Error
             </button>
           </div>
-          <div class="mt-3 space-y-3">
-            ${(state.errors || []).map((item, index) => errorEditorHtml(item, index)).join("") || `<div class="empty-state">No errors logged yet.</div>`}
+          <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="errorSelect">Error Record</label>
+              <select id="errorSelect" ${(state.errors || []).length ? "" : "disabled"}>
+                ${(state.errors || []).map((item, index) => `
+                  <option value="${index}" ${index === activeError ? "selected" : ""}>Error ${index + 1}: ${escapeHtml(item.pcName || "PC")} / ${escapeHtml(item.stepName || "Unassigned Step")}</option>
+                `).join("") || `<option>No errors logged</option>`}
+              </select>
+            </div>
+          </div>
+          <div class="mt-3">
+            ${selectedError ? errorEditorHtml(selectedError, activeError) : `<div class="empty-state">No errors logged yet.</div>`}
           </div>
         </div>
       `;
+
+      document.getElementById("stepSelect").addEventListener("change", (event) => {
+        activeStep = Number(event.target.value);
+        renderAll();
+      });
+
+      const errorSelect = document.getElementById("errorSelect");
+      if (errorSelect && !errorSelect.disabled) {
+        errorSelect.addEventListener("change", (event) => {
+          activeError = Number(event.target.value);
+          renderAll();
+        });
+      }
 
       holder.querySelectorAll("[data-pc-field]").forEach((field) => {
         field.addEventListener("input", () => {
@@ -1286,8 +1328,10 @@
           const stepIndex = Number(button.dataset.removeStep);
           if (pc.steps.length === 1) {
             pc.steps[0] = blankStep();
+            activeStep = 0;
           } else {
             pc.steps.splice(stepIndex, 1);
+            activeStep = Math.min(activeStep, pc.steps.length - 1);
           }
           saveState();
           renderAll();
@@ -1298,6 +1342,7 @@
         button.addEventListener("click", () => {
           const stepIndex = Number(button.dataset.duplicateStep);
           pc.steps.splice(stepIndex + 1, 0, { ...clone(pc.steps[stepIndex]), id: uid(), name: `${pc.steps[stepIndex].name || "Step"} Copy` });
+          activeStep = stepIndex + 1;
           saveState();
           renderAll();
           showToast("Step duplicated");
@@ -1312,6 +1357,7 @@
           if (targetIndex < 0 || targetIndex >= pc.steps.length) return;
           const [item] = pc.steps.splice(stepIndex, 1);
           pc.steps.splice(targetIndex, 0, item);
+          activeStep = targetIndex;
           saveState();
           renderAll();
           showToast("Step moved");
@@ -1320,6 +1366,7 @@
 
       document.getElementById("addStepBtn").addEventListener("click", () => {
         pc.steps.push(blankStep());
+        activeStep = pc.steps.length - 1;
         saveState();
         renderAll();
       });
@@ -1335,6 +1382,16 @@
           const errorIndex = Number(field.dataset.errorIndex);
           const key = field.dataset.errorField;
           state.errors[errorIndex][key] = field.value;
+          if (key === "pcName") {
+            const pc = state.pcs.find((item) => item.name === field.value);
+            const stepNames = (pc?.steps || []).map((item, index) => item.name || `Step ${index + 1}`);
+            if (!stepNames.includes(state.errors[errorIndex].stepName)) {
+              state.errors[errorIndex].stepName = stepNames[0] || "";
+            }
+            saveState();
+            renderAll();
+            return;
+          }
           scheduleStateSync();
         });
       });
@@ -1343,6 +1400,7 @@
         button.addEventListener("click", () => {
           const errorIndex = Number(button.dataset.removeError);
           state.errors.splice(errorIndex, 1);
+          activeError = Math.min(errorIndex, Math.max(state.errors.length - 1, 0));
           saveState();
           renderAll();
           showToast("Error removed");
@@ -1351,6 +1409,7 @@
 
       document.getElementById("addErrorBtn").addEventListener("click", () => {
         state.errors.push(blankError());
+        activeError = state.errors.length - 1;
         saveState();
         renderAll();
         showToast("Error added");
@@ -1435,6 +1494,11 @@
     function errorEditorHtml(item, index) {
       const prefix = `error-${index}`;
       const pcOptions = state.pcs.map((pc, pcIndex) => pc.name || `PC ${pcIndex + 1}`);
+      const selectedPcIndex = Math.max(0, pcOptions.indexOf(item.pcName));
+      const stepOptions = (state.pcs[selectedPcIndex]?.steps || [])
+        .map((stepItem, stepIndex) => stepItem.name || `Step ${stepIndex + 1}`)
+        .filter(Boolean);
+      if (item.stepName && !stepOptions.includes(item.stepName)) stepOptions.unshift(item.stepName);
       const frequencyOptions = ["Rarely", "Occasionally", "Frequently"];
       const statusOptions = ["Unsolved", "Solved"];
       return `
@@ -1457,7 +1521,9 @@
             </div>
             <div>
               <label for="${prefix}-stepName">Step Name</label>
-              <input id="${prefix}-stepName" data-error-index="${index}" data-error-field="stepName" value="${escapeHtml(item.stepName)}" />
+              <select id="${prefix}-stepName" data-error-index="${index}" data-error-field="stepName">
+                ${stepOptions.map((option) => `<option value="${escapeHtml(option)}" ${item.stepName === option ? "selected" : ""}>${escapeHtml(option)}</option>`).join("") || `<option value="">No steps available</option>`}
+              </select>
             </div>
             <div class="sm:col-span-2">
               <label for="${prefix}-description">Error Description</label>
@@ -1851,6 +1917,8 @@
         if (!imported || !Array.isArray(imported.pcs)) throw new Error("Missing workflow lanes");
         state = normalizeState(imported);
         activePc = 0;
+        activeStep = 0;
+        activeError = 0;
         saveState();
         renderAll();
         showToast("JSON workflow imported");
@@ -1934,6 +2002,8 @@
     document.getElementById("sampleBtn").addEventListener("click", () => {
       state = clone(sampleState);
       activePc = 0;
+      activeStep = 0;
+      activeError = 0;
       saveState();
       renderAll();
       showToast("Sample loaded");
@@ -1944,6 +2014,8 @@
       lastClearedState = clone(state);
       state = getBlankState();
       activePc = 0;
+      activeStep = 0;
+      activeError = 0;
       saveState();
       renderAll();
       showToast("Workflow cleared. Press Ctrl+Z to undo.");
@@ -1954,6 +2026,8 @@
         event.preventDefault();
         state = clone(lastClearedState);
         lastClearedState = null;
+        activeStep = 0;
+        activeError = 0;
         saveState();
         renderAll();
         showToast("Clear undone");
