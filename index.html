@@ -242,13 +242,14 @@
     .title-copy {
       display: flex;
       min-width: 0;
+      height: 82px;
       flex-direction: column;
       justify-content: center;
     }
 
     .headline {
       font-size: 50px;
-      line-height: 1;
+      line-height: .92;
       font-weight: 950;
       letter-spacing: 0;
       text-transform: uppercase;
@@ -256,10 +257,10 @@
     }
 
     .subline {
-      margin-top: 8px;
+      margin-top: 6px;
       color: rgba(255, 255, 255, .88);
       font-size: 17px;
-      line-height: 1.38;
+      line-height: 1.28;
       max-width: 900px;
     }
 
@@ -735,12 +736,12 @@
     }
 
     .is-exporting .title-copy {
-      position: relative;
-      top: -10px;
+      position: static;
+      top: auto;
     }
 
     .is-exporting .headline {
-      line-height: .96;
+      line-height: .92;
     }
 
     .is-exporting .subline {
