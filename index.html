@@ -662,24 +662,17 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
       margin-bottom: 8px;
       min-height: 30px;
       border-radius: 999px;
       background: #f6fbf7;
       border: 1px solid #d6e6dc;
-      padding: 6px 10px;
+      padding: 6px 14px;
       color: #315346;
       font-size: 11px;
       font-weight: 900;
       line-height: 1.25;
-    }
-
-    .error-meta svg {
-      display: block;
-      width: 14px;
-      height: 14px;
-      align-self: center;
+      white-space: nowrap;
     }
 
     .error-meta-label {
@@ -1805,6 +1798,7 @@
         <div class="error-grid">
           ${errors.map((item) => {
             const solved = item.status === "Solved";
+            const frequency = String(item.frequency || "Occasionally").trim() || "Occasionally";
             return `
               <article class="error-card ${solved ? "solved" : ""}">
                 <div class="error-card-head">
@@ -1815,8 +1809,7 @@
                   <div class="error-status">${escapeHtml(item.status || "Unsolved")}</div>
                 </div>
                 <div class="error-meta">
-                  <i data-lucide="activity" class="h-3.5 w-3.5"></i>
-                  <span class="error-meta-label">${escapeHtml(item.frequency || "Occasionally")}</span>
+                  <span class="error-meta-label">${escapeHtml(frequency)}</span>
                 </div>
                 <div class="error-text"><strong>Error:</strong> ${escapeHtml(item.description || "No description added.")}</div>
                 <div class="error-text mt-1"><strong>Solution:</strong> ${escapeHtml(item.resolution || "No resolution added yet.")}</div>
