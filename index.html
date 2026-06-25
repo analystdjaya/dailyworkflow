@@ -1,21 +1,20 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3-PC Workflow Infographic Builder</title>
-  <meta name="description" content="Build, share, and export a 3-PC daily workflow infographic with triggers, handoffs, dependencies, and status checkpoints." />
-  <meta name="theme-color" content="#0b6b45" />
-  <meta property="og:title" content="3-PC Workflow Infographic Builder" />
-  <meta property="og:description" content="Build, share, and export a clean 3-PC daily workflow infographic." />
-  <meta property="og:type" content="website" />
-  <link rel="canonical" href="https://analystdjaya.github.io/dailyworkflow/" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6b45'/%3E%3Cpath d='M18 20h12v8H18zm16 0h12v8H34zM18 36h12v8H18zm16 0h12v8H34z' fill='white'/%3E%3Cpath d='M30 24h4M24 28v8m16-8v8m-10 4h4' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Build, share, and export a 3-PC daily workflow infographic with triggers, handoffs, dependencies, and status checkpoints.">
+  <meta name="theme-color" content="#0b6b45">
+  <meta property="og:title" content="3-PC Workflow Infographic Builder">
+  <meta property="og:description" content="Build, share, and export a clean 3-PC daily workflow infographic.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://analystdjaya.github.io/dailyworkflow/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6b45'/%3E%3Cpath d='M18 20h12v8H18zm16 0h12v8H34zM18 36h12v8H18zm16 0h12v8H34z' fill='white'/%3E%3Cpath d='M30 24h4M24 28v8m16-8v8m-10 4h4' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
   <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <style>
-    :root {
+:root {
       --ink: #17221f;
       --muted: #5c6f67;
       --line: #cfe4d7;
@@ -117,6 +116,7 @@
     }
 
     .toolbar-btn:hover { transform: translateY(-1px); }
+    .toolbar-btn[aria-busy="true"] { opacity: .72; cursor: progress; transform: none; }
     .toolbar-btn:disabled {
       cursor: not-allowed;
       opacity: .45;
@@ -534,6 +534,8 @@
       text-align: center;
     }
 
+    .app-ready .preview-stage { transition: height .18s ease; }
+
     .toast {
       position: fixed;
       right: 18px;
@@ -594,6 +596,11 @@
       .app-shell { display: block; }
       .panel { border-radius: 14px; }
       .toolbar-btn { width: 100%; }
+      .step-actions .toolbar-btn {
+        width: 40px;
+        min-width: 40px;
+        flex: 0 0 40px;
+      }
       #pcTabs {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -605,17 +612,18 @@
       }
     }
   </style>
+  <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.col-span-2{grid-column:span 2 / span 2}.mb-3{margin-bottom:0.75rem}.mt-1{margin-top:0.25rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.grid{display:grid}.h-12{height:3rem}.h-4{height:1rem}.h-7{height:1.75rem}.h-3\.5{height:0.875rem}.h-6{height:1.5rem}.h-8{height:2rem}.min-h-screen{min-height:100vh}.\!min-h-8{min-height:2rem !important}.\!min-h-9{min-height:2.25rem !important}.w-12{width:3rem}.w-4{width:1rem}.w-7{width:1.75rem}.w-3\.5{width:0.875rem}.w-6{width:1.5rem}.w-8{width:2rem}.min-w-0{min-width:0px}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-5{gap:1.25rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[\#d6e6dc\]{--tw-border-opacity:1;border-color:rgb(214 230 220 / var(--tw-border-opacity, 1))}.border-\[\#dcece1\]{--tw-border-opacity:1;border-color:rgb(220 236 225 / var(--tw-border-opacity, 1))}.bg-\[\#0b6b45\]{--tw-bg-opacity:1;background-color:rgb(11 107 69 / var(--tw-bg-opacity, 1))}.bg-\[\#f6fbf7\]{--tw-bg-opacity:1;background-color:rgb(246 251 247 / var(--tw-bg-opacity, 1))}.p-3{padding:0.75rem}.p-4{padding:1rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.\!px-2{padding-left:0.5rem !important;padding-right:0.5rem !important}.\!px-3{padding-left:0.75rem !important;padding-right:0.75rem !important}.\!py-1{padding-top:0.25rem !important;padding-bottom:0.25rem !important}.\!py-2{padding-top:0.5rem !important;padding-bottom:0.5rem !important}.pb-4{padding-bottom:1rem}.pt-4{padding-top:1rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-base{font-size:1rem;line-height:1.5rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-black{font-weight:900}.font-bold{font-weight:700}.uppercase{text-transform:uppercase}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:0.025em}.text-\[\#0b6b45\]{--tw-text-opacity:1;color:rgb(11 107 69 / var(--tw-text-opacity, 1))}.text-\[\#17221f\]{--tw-text-opacity:1;color:rgb(23 34 31 / var(--tw-text-opacity, 1))}.text-\[\#607268\]{--tw-text-opacity:1;color:rgb(96 114 104 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-\[\#6b7d74\]{--tw-text-opacity:1;color:rgb(107 125 116 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:col-span-2{grid-column:span 2 / span 2}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:justify-between{justify-content:space-between}.sm\:p-4{padding:1rem}.sm\:p-5{padding:1.25rem}}@media (min-width: 1024px){.lg\:p-6{padding:1.5rem}}</style>
 </head>
 <body>
   <main class="min-h-screen p-3 sm:p-5 lg:p-6">
     <div class="app-shell">
-      <aside class="panel p-4 sm:p-5">
+      <aside class="panel p-4 sm:p-5" aria-label="Workflow editor">
         <div class="flex items-start justify-between gap-3 border-b border-[#dcece1] pb-4">
           <div>
             <p class="text-xs font-black uppercase tracking-wide text-[#0b6b45]">Workflow Builder</p>
             <h1 class="mt-1 text-2xl font-black leading-tight text-[#17221f]">3-PC Infographic</h1>
           </div>
-          <div class="grid h-12 w-12 place-items-center rounded-2xl bg-[#0b6b45] text-white">
+          <div class="grid h-12 w-12 place-items-center rounded-2xl bg-[#0b6b45] text-white" aria-hidden="true">
             <i data-lucide="network" class="h-7 w-7"></i>
           </div>
         </div>
@@ -623,15 +631,15 @@
         <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div class="sm:col-span-2">
             <label for="docTitle">Infographic Title</label>
-            <input id="docTitle" data-doc-field="title" />
+            <input id="docTitle" data-doc-field="title" autocomplete="off">
           </div>
           <div>
             <label for="docDate">Date / Version</label>
-            <input id="docDate" data-doc-field="dateLabel" />
+            <input id="docDate" data-doc-field="dateLabel" autocomplete="off">
           </div>
           <div>
             <label for="docOwner">Owner / Team</label>
-            <input id="docOwner" data-doc-field="owner" />
+            <input id="docOwner" data-doc-field="owner" autocomplete="organization">
           </div>
           <div class="sm:col-span-2">
             <label for="docObjective">Objective</label>
@@ -639,63 +647,38 @@
           </div>
         </div>
 
-        <div class="mt-5 flex gap-2" id="pcTabs"></div>
-
+        <div class="mt-5 flex gap-2" id="pcTabs" role="tablist" aria-label="PC lanes"></div>
         <div class="mt-4 border-t border-[#dcece1] pt-4" id="pcForm"></div>
 
         <div class="mt-5 grid gap-2 sm:grid-cols-2">
-          <button class="toolbar-btn btn-primary" id="previewBtn" type="button">
-            <i data-lucide="eye" class="h-4 w-4"></i>
-            Preview
-          </button>
-          <button class="toolbar-btn btn-secondary" id="shareBtn" type="button">
-            <i data-lucide="link" class="h-4 w-4"></i>
-            Share Link
-          </button>
-          <button class="toolbar-btn btn-secondary" id="exportJsonBtn" type="button">
-            <i data-lucide="file-down" class="h-4 w-4"></i>
-            Export JSON
-          </button>
-          <button class="toolbar-btn btn-secondary" id="importJsonBtn" type="button">
-            <i data-lucide="file-up" class="h-4 w-4"></i>
-            Import JSON
-          </button>
-          <button class="toolbar-btn btn-dark" id="downloadPngBtn" type="button">
-            <i data-lucide="download" class="h-4 w-4"></i>
-            Download PNG
-          </button>
-          <button class="toolbar-btn btn-secondary" id="downloadJpgBtn" type="button">
-            <i data-lucide="image" class="h-4 w-4"></i>
-            Download JPG
-          </button>
-          <button class="toolbar-btn btn-secondary" id="sampleBtn" type="button">
-            <i data-lucide="sparkles" class="h-4 w-4"></i>
-            Sample
-          </button>
-          <button class="toolbar-btn btn-danger" id="resetBtn" type="button">
-            <i data-lucide="trash-2" class="h-4 w-4"></i>
-            Clear
-          </button>
+          <button class="toolbar-btn btn-primary" id="previewBtn" type="button"><i data-lucide="eye" class="h-4 w-4"></i>Preview</button>
+          <button class="toolbar-btn btn-secondary" id="shareBtn" type="button"><i data-lucide="link" class="h-4 w-4"></i>Share Link</button>
+          <button class="toolbar-btn btn-secondary" id="exportJsonBtn" type="button"><i data-lucide="file-down" class="h-4 w-4"></i>Export JSON</button>
+          <button class="toolbar-btn btn-secondary" id="importJsonBtn" type="button"><i data-lucide="file-up" class="h-4 w-4"></i>Import JSON</button>
+          <button class="toolbar-btn btn-dark" id="downloadPngBtn" type="button"><i data-lucide="download" class="h-4 w-4"></i>Download PNG</button>
+          <button class="toolbar-btn btn-secondary" id="downloadJpgBtn" type="button"><i data-lucide="image" class="h-4 w-4"></i>Download JPG</button>
+          <button class="toolbar-btn btn-secondary" id="sampleBtn" type="button"><i data-lucide="sparkles" class="h-4 w-4"></i>Sample</button>
+          <button class="toolbar-btn btn-danger" id="resetBtn" type="button"><i data-lucide="trash-2" class="h-4 w-4"></i>Clear</button>
         </div>
-        <input class="visually-hidden" id="jsonFileInput" type="file" accept="application/json,.json" />
+        <input class="visually-hidden" id="jsonFileInput" type="file" accept="application/json,.json">
       </aside>
 
-      <section class="panel p-3 sm:p-4">
+      <section class="panel p-3 sm:p-4" aria-label="Workflow preview">
         <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-lg font-black text-[#17221f]">Preview</h2>
-            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Saved in this browser</p>
+            <p class="text-sm font-bold text-[#607268]" id="saveStatus">Loading...</p>
           </div>
           <div class="flex flex-wrap items-center gap-2 rounded-full border border-[#d6e6dc] bg-[#f6fbf7] px-3 py-2 text-xs font-black uppercase text-[#0b6b45]" aria-label="Preview zoom controls">
             <i data-lucide="zoom-in" class="h-4 w-4"></i>
-            <button class="zoom-btn" type="button" data-zoom="fit">Fit</button>
-            <button class="zoom-btn" type="button" data-zoom="0.75">75%</button>
-            <button class="zoom-btn" type="button" data-zoom="1">100%</button>
+            <button class="zoom-btn active" type="button" data-zoom="fit" aria-pressed="true">Fit</button>
+            <button class="zoom-btn" type="button" data-zoom="0.75" aria-pressed="false">75%</button>
+            <button class="zoom-btn" type="button" data-zoom="1" aria-pressed="false">100%</button>
           </div>
         </div>
         <div class="preview-wrap">
           <div class="preview-stage">
-            <article class="infographic" id="infographic"></article>
+            <article class="infographic" id="infographic" aria-label="Generated workflow infographic"></article>
           </div>
         </div>
       </section>
@@ -703,9 +686,8 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
   <script>
-    const STORAGE_KEY = "threePcWorkflowBuilder.v1";
+const STORAGE_KEY = "threePcWorkflowBuilder.v1";
     const colors = ["#0b6b45", "#0f766e", "#155e75"];
     const icons = ["keyboard", "settings", "monitor-check"];
     let activePc = 0;
@@ -713,6 +695,16 @@
     let previewZoom = "fit";
     let saveTimer = null;
     let lastClearedState = null;
+    let statusTimer = null;
+
+    const safeStorage = {
+      get(key) {
+        try { return window.localStorage ? window.localStorage.getItem(key) : null; } catch (error) { return null; }
+      },
+      set(key, value) {
+        try { if (window.localStorage) window.localStorage.setItem(key, value); return true; } catch (error) { return false; }
+      }
+    };
 
     const sampleState = {
       title: "3-PC Daily Workflow Map",
@@ -786,7 +778,7 @@
         return normalizeState(urlState);
       }
 
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = safeStorage.get(STORAGE_KEY);
       if (stored) {
         try {
           return normalizeState(JSON.parse(stored));
@@ -818,12 +810,16 @@
     }
 
     function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const saved = safeStorage.set(STORAGE_KEY, JSON.stringify(state));
       const status = document.getElementById("saveStatus");
-      if (status) status.textContent = `Saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+      if (status) status.textContent = saved
+        ? `Saved ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+        : "Autosave unavailable";
     }
 
     function scheduleStateSync(options = {}) {
+      const status = document.getElementById("saveStatus");
+      if (status) status.textContent = "Unsaved changes...";
       clearTimeout(saveTimer);
       saveTimer = setTimeout(() => {
         saveState();
@@ -1013,7 +1009,7 @@
       tabs.setAttribute("role", "tablist");
       tabs.setAttribute("aria-label", "PC lanes");
       tabs.innerHTML = state.pcs.map((pc, index) => `
-        <button class="tab ${index === activePc ? "active" : ""}" type="button" data-tab="${index}" role="tab" aria-selected="${index === activePc}" aria-controls="pcForm">
+        <button class="tab ${index === activePc ? "active" : ""}" type="button" data-tab="${index}" role="tab" id="pc-tab-${index}" aria-selected="${index === activePc}" aria-controls="pcForm" tabindex="${index === activePc ? 0 : -1}">
           ${escapeHtml(pc.name || `PC ${index + 1}`)}
         </button>
       `).join("");
@@ -1022,12 +1018,25 @@
           activePc = Number(button.dataset.tab);
           renderAll();
         });
+        button.addEventListener("keydown", (event) => {
+          const keys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+          if (!keys.includes(event.key)) return;
+          event.preventDefault();
+          if (event.key === "Home") activePc = 0;
+          else if (event.key === "End") activePc = state.pcs.length - 1;
+          else activePc = (activePc + (event.key === "ArrowRight" ? 1 : -1) + state.pcs.length) % state.pcs.length;
+          renderAll();
+          document.querySelector(`[data-tab="${activePc}"]`)?.focus();
+        });
       });
     }
 
     function renderPcForm() {
       const pc = state.pcs[activePc];
       const holder = document.getElementById("pcForm");
+      holder.setAttribute("role", "tabpanel");
+      holder.setAttribute("tabindex", "0");
+      holder.setAttribute("aria-labelledby", `pc-tab-${activePc}`);
       const pcNameId = `pc-${activePc}-name`;
       holder.innerHTML = `
         <div class="grid grid-cols-1 gap-3">
@@ -1119,7 +1128,7 @@
               <span class="grid h-7 w-7 place-items-center rounded-full bg-[#0b6b45] text-xs text-white">${index + 1}</span>
               Step ${index + 1}
             </div>
-            <div class="flex flex-wrap items-center justify-end gap-2">
+            <div class="step-actions flex flex-wrap items-center justify-end gap-2">
               <button class="toolbar-btn btn-secondary !min-h-8 !px-2 !py-1" type="button" data-move-step="${index}" data-direction="-1" title="Move step up" aria-label="Move step ${index + 1} up" ${index === 0 ? "disabled" : ""}>
                 <i data-lucide="arrow-up" class="h-4 w-4"></i>
               </button>
@@ -1480,9 +1489,15 @@
 
     async function importJsonFile(file) {
       if (!file) return;
+      if (!file.name.toLowerCase().endsWith(".json")) {
+        showToast("Choose a JSON workflow backup");
+        return;
+      }
       try {
         const json = JSON.parse(await file.text());
-        state = normalizeState(expandCompactState(json));
+        const imported = expandCompactState(json);
+        if (!imported || !Array.isArray(imported.pcs)) throw new Error("Missing workflow lanes");
+        state = normalizeState(imported);
         activePc = 0;
         saveState();
         renderAll();
@@ -1528,6 +1543,8 @@
 
     document.getElementById("shareBtn").addEventListener("click", async () => {
       saveState();
+      const shareButton = document.getElementById("shareBtn");
+      shareButton?.setAttribute("aria-busy", "true");
       showToast("Creating compressed link...");
       try {
         const shareUrl = await createShareUrl();
@@ -1536,11 +1553,13 @@
           await navigator.clipboard.writeText(shareUrl);
           showToast(`Shorter link copied (${shareUrl.length} characters)`);
         } catch (error) {
-          prompt("Copy this share link:", shareUrl);
+          showToast("Share link added to the address bar");
         }
       } catch (error) {
         console.error(error);
         showToast("Short link could not be created in this browser");
+      } finally {
+        shareButton?.removeAttribute("aria-busy");
       }
     });
 
@@ -1595,6 +1614,7 @@
       state = await loadState();
       renderAll();
       saveState();
+      document.documentElement.classList.add("app-ready");
     }
 
     initApp();
