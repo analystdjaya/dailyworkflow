@@ -412,8 +412,13 @@
       color: #164a33;
       border: 1px solid #cce4d5;
       font-size: 11px;
-      font-weight: 850;
+      font-weight: 800;
+      line-height: 1;
       overflow-wrap: anywhere;
+    }
+
+    .chip svg {
+      flex: 0 0 auto;
     }
 
     .result-box {
@@ -1866,13 +1871,6 @@
         node.id = "infographic-export";
         host.appendChild(node);
         document.body.appendChild(host);
-
-        if (window.lucide) {
-          lucide.createIcons({
-            attrs: { "stroke-width": 2.4 },
-            nameAttr: "data-lucide"
-          });
-        }
 
         if (document.fonts && document.fonts.ready) {
           await document.fonts.ready;
