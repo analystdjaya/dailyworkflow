@@ -407,9 +407,9 @@
       justify-content: center;
       gap: 5px;
       max-width: 100%;
-      height: 28px;
+      min-height: 28px;
       border-radius: 999px;
-      padding: 0 8px;
+      padding: 5px 8px;
       background: #eff8f2;
       color: #164a33;
       border: 1px solid #cce4d5;
@@ -427,8 +427,6 @@
 
     .chip-label {
       display: inline-block;
-      position: relative;
-      top: -1px;
       line-height: 1;
       white-space: nowrap;
     }
@@ -477,11 +475,11 @@
       justify-content: center;
       gap: 6px;
       max-width: 260px;
-      height: 28px;
+      min-height: 28px;
       border: 1px solid #cfe4d7;
       background: #fff;
       border-radius: 999px;
-      padding: 0 8px;
+      padding: 5px 8px;
       font-weight: 900;
       line-height: 1;
     }
@@ -495,8 +493,6 @@
 
     .arrow-label {
       display: inline-block;
-      position: relative;
-      top: -1px;
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -658,11 +654,11 @@
       justify-content: center;
       gap: 6px;
       margin-bottom: 8px;
-      height: 28px;
+      min-height: 28px;
       border-radius: 999px;
       background: #f6fbf7;
       border: 1px solid #d6e6dc;
-      padding: 0 9px;
+      padding: 5px 9px;
       color: #315346;
       font-size: 11px;
       font-weight: 900;
@@ -678,8 +674,6 @@
 
     .error-meta-label {
       display: inline-block;
-      position: relative;
-      top: -1px;
       line-height: 1;
       white-space: nowrap;
     }
@@ -1935,18 +1929,7 @@
           scrollX: 0,
           scrollY: 0
         };
-        let canvas;
-        try {
-          canvas = await html2canvas(previewStage, {
-            ...exportOptions,
-            foreignObjectRendering: true
-          });
-          if (isBlankCanvas(canvas)) {
-            canvas = await html2canvas(previewStage, exportOptions);
-          }
-        } catch (error) {
-          canvas = await html2canvas(previewStage, exportOptions);
-        }
+        const canvas = await html2canvas(previewStage, exportOptions);
         const mime = type === "jpg" ? "image/jpeg" : "image/png";
         const extension = type === "jpg" ? "jpg" : "png";
         const link = document.createElement("a");
@@ -1963,26 +1946,6 @@
       } finally {
         downloadButtons.forEach((button) => button.disabled = false);
       }
-    }
-
-    function isBlankCanvas(canvas) {
-      const context = canvas.getContext("2d", { willReadFrequently: true });
-      if (!context) return true;
-
-      const step = Math.max(20, Math.floor(Math.min(canvas.width, canvas.height) / 80));
-      try {
-        for (let y = 0; y < canvas.height; y += step) {
-          for (let x = 0; x < canvas.width; x += step) {
-            const [red, green, blue, alpha] = context.getImageData(x, y, 1, 1).data;
-            if (alpha > 0 && (red < 245 || green < 245 || blue < 245)) {
-              return false;
-            }
-          }
-        }
-      } catch (error) {
-        return false;
-      }
-      return true;
     }
 
     function downloadJson() {
