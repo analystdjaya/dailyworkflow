@@ -171,6 +171,13 @@
       padding: 14px;
     }
 
+    .error-editor {
+      border: 1px solid #f1c9b8;
+      border-radius: 15px;
+      background: #fffaf7;
+      padding: 14px;
+    }
+
     .preview-wrap {
       width: 100%;
       max-width: 100%;
@@ -481,6 +488,124 @@
       letter-spacing: .02em;
     }
 
+    .trigger-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 12px;
+      background: #f4fbf7;
+      border-bottom: 1px solid #dcece1;
+    }
+
+    .trigger-summary-item {
+      border: 1px solid #d6e6dc;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 12px;
+      min-width: 0;
+    }
+
+    .trigger-summary-label {
+      color: #5c6f67;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .trigger-summary-value {
+      margin-top: 4px;
+      color: #17221f;
+      font-size: 13px;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .error-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 12px;
+    }
+
+    .error-card {
+      border: 1px solid #f1d1c3;
+      border-left: 6px solid #e66a22;
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px;
+      box-shadow: 0 10px 24px rgba(185, 71, 17, .08);
+      min-width: 0;
+    }
+
+    .error-card.solved {
+      border-color: #cfe4d7;
+      border-left-color: #10804f;
+      box-shadow: 0 10px 24px rgba(16, 128, 79, .07);
+    }
+
+    .error-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .error-pc {
+      color: #0b6b45;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .error-step {
+      margin-top: 2px;
+      color: #17221f;
+      font-size: 17px;
+      font-weight: 950;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
+    }
+
+    .error-status {
+      border-radius: 999px;
+      padding: 5px 8px;
+      background: #fff4ed;
+      color: #b94711;
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .error-card.solved .error-status {
+      background: #edf7f1;
+      color: #0b6b45;
+    }
+
+    .error-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      border-radius: 999px;
+      background: #f6fbf7;
+      border: 1px solid #d6e6dc;
+      padding: 5px 8px;
+      color: #315346;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .error-text {
+      color: #40584e;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -614,6 +739,7 @@
         padding: 10px;
         max-width: calc(100vw - 42px);
       }
+      .trigger-summary { grid-template-columns: 1fr; }
     }
   </style>
   <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.col-span-2{grid-column:span 2 / span 2}.mb-3{margin-bottom:0.75rem}.mt-1{margin-top:0.25rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-3{margin-top:0.75rem}.block{display:block}.flex{display:flex}.grid{display:grid}.h-12{height:3rem}.h-4{height:1rem}.h-7{height:1.75rem}.h-3\.5{height:0.875rem}.h-6{height:1.5rem}.h-8{height:2rem}.min-h-screen{min-height:100vh}.\!min-h-8{min-height:2rem !important}.\!min-h-9{min-height:2.25rem !important}.w-12{width:3rem}.w-4{width:1rem}.w-7{width:1.75rem}.w-3\.5{width:0.875rem}.w-6{width:1.5rem}.w-8{width:2rem}.min-w-0{min-width:0px}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-5{gap:1.25rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-\[\#d6e6dc\]{--tw-border-opacity:1;border-color:rgb(214 230 220 / var(--tw-border-opacity, 1))}.border-\[\#dcece1\]{--tw-border-opacity:1;border-color:rgb(220 236 225 / var(--tw-border-opacity, 1))}.bg-\[\#0b6b45\]{--tw-bg-opacity:1;background-color:rgb(11 107 69 / var(--tw-bg-opacity, 1))}.bg-\[\#f6fbf7\]{--tw-bg-opacity:1;background-color:rgb(246 251 247 / var(--tw-bg-opacity, 1))}.p-3{padding:0.75rem}.p-4{padding:1rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.\!px-2{padding-left:0.5rem !important;padding-right:0.5rem !important}.\!px-3{padding-left:0.75rem !important;padding-right:0.75rem !important}.\!py-1{padding-top:0.25rem !important;padding-bottom:0.25rem !important}.\!py-2{padding-top:0.5rem !important;padding-bottom:0.5rem !important}.pb-4{padding-bottom:1rem}.pt-4{padding-top:1rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-base{font-size:1rem;line-height:1.5rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.font-black{font-weight:900}.font-bold{font-weight:700}.uppercase{text-transform:uppercase}.leading-tight{line-height:1.25}.tracking-wide{letter-spacing:0.025em}.text-\[\#0b6b45\]{--tw-text-opacity:1;color:rgb(11 107 69 / var(--tw-text-opacity, 1))}.text-\[\#17221f\]{--tw-text-opacity:1;color:rgb(23 34 31 / var(--tw-text-opacity, 1))}.text-\[\#607268\]{--tw-text-opacity:1;color:rgb(96 114 104 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-\[\#6b7d74\]{--tw-text-opacity:1;color:rgb(107 125 116 / var(--tw-text-opacity, 1))}@media (min-width: 640px){.sm\:col-span-2{grid-column:span 2 / span 2}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-center{align-items:center}.sm\:justify-between{justify-content:space-between}.sm\:p-4{padding:1rem}.sm\:p-5{padding:1.25rem}}@media (min-width: 1024px){.lg\:p-6{padding:1.5rem}}</style>
@@ -691,7 +817,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script>
-const STORAGE_KEY = "threePcWorkflowBuilder.v1";
+    const STORAGE_KEY = "threePcWorkflowBuilder.v3";
     const colors = ["#0b6b45", "#0f766e", "#155e75"];
     const icons = ["keyboard", "settings", "monitor-check"];
     let activePc = 0;
@@ -714,32 +840,58 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
       title: "3-PC Daily Workflow Map",
       dateLabel: "Daily Run Documentation",
       owner: "Automation Team",
-      objective: "Document each PC lane, show macro order, identify trigger handoffs, and confirm the daily workflow is finished successfully.",
+      objective: "PC 1 runs first, sends one completion email to all 3 PCs, then PC 1, PC 2, and PC 3 continue their own tasks in parallel.",
+      errors: [
+        {
+          id: uid(),
+          pcName: "PC 1",
+          stepName: "Initial Run",
+          description: "Task Scheduler did not trigger the startup macro.",
+          frequency: "Occasionally",
+          resolution: "Check Task Scheduler history, confirm the macro file path, and rerun the startup macro manually if needed.",
+          status: "Unsolved"
+        },
+        {
+          id: uid(),
+          pcName: "PC 2",
+          stepName: "Wait for Broadcast",
+          description: "PC1_READY email arrived late or mailbox rule did not detect it.",
+          frequency: "Rarely",
+          resolution: "Restart the mailbox rule, confirm inbox sync, and resend the PC1_READY notification if needed.",
+          status: "Solved"
+        },
+        {
+          id: uid(),
+          pcName: "PC 3",
+          stepName: "Daily Finish Check",
+          description: "One PC output was missing during final validation.",
+          frequency: "Frequently",
+          resolution: "Verify PC 1, PC 2, and PC 3 result files before marking the workflow finished.",
+          status: "Unsolved"
+        }
+      ],
       pcs: [
         {
           name: "PC 1",
           steps: [
-            step("Scheduler Start", "Run Task Scheduler job", "Scheduler", "Daily at 07:00", "Windows Task Scheduler", "Starts refresh preparation", "Macro refreshok", "07:00", "Ready", "Main entry point for the daily flow."),
-            step("Refresh OK", "Run macro refreshok", "Previous Step", "Scheduler completed", "Source workbook and current data", "Sends email REFRESHOK", "PC 2 waits for REFRESHOK", "07:05", "Success", "Email subject must match exactly."),
-            step("First Batch", "Run macro firstbatch", "Email", "Triggered by email RefreshOK", "REFRESHOK email confirmation", "Sends email batch 1", "Macro secondbatch", "07:15", "Success", "Starts after mailbox trigger arrives."),
-            step("Second Batch", "Run macro secondbatch", "Email", "Triggered by email batch1", "Batch 1 output", "Sends email batch 2", "PC 3 validates batch status", "07:30", "Success", "Continue until the final batch email is sent.")
+            step("Initial Run", "Run PC 1 startup macro", "Scheduler", "Daily at 07:00", "Windows Task Scheduler", "Prepares source data", "Send broadcast email", "07:00", "Running", "PC 1 is the only lane that starts before the shared trigger."),
+            step("Broadcast Ready Email", "Send completion notification to PC 1, PC 2, and PC 3", "Previous Step", "PC 1 startup macro finished", "PC 1 completion status", "Email: PC1_READY", "Parallel tasks start on all PCs", "07:05", "Success", "This is the shared gate that releases every PC at the same time."),
+            step("PC 1 Parallel Task", "Run PC 1 post-email macro", "Email", "Email subject contains PC1_READY", "Broadcast email from PC 1", "PC 1 task result", "Daily finish check", "07:06", "Running", "Starts together with PC 2 and PC 3 after the email arrives.")
           ]
         },
         {
           name: "PC 2",
           steps: [
-            step("Wait for Refresh", "Watch inbox for REFRESHOK", "Email", "Email subject contains REFRESHOK", "PC 1 refresh email", "Processing queue opens", "Pull Source Files", "07:07", "Waiting", "Mailbox rule starts the automation."),
-            step("Pull Source Files", "Run import and combine macro", "Previous Step", "Refresh email detected", "Excel files, folders, CSV exports", "Combined staging data", "Clean Transform", "07:10", "Success", "Checks files before transformation."),
-            step("Clean Transform", "Run clean_standardize macro", "Previous Step", "Staging data exists", "Raw combined data", "Sends email PROCESSING DONE", "PC 3 dashboard update", "07:25", "Success", "Removes blanks and standardizes columns.")
+            step("Wait for Broadcast", "Watch inbox for PC1_READY", "Email", "Email subject contains PC1_READY", "Broadcast email from PC 1", "PC 2 automation starts", "PC 2 parallel task", "07:05", "Waiting", "PC 2 does not wait for PC 3; it only waits for PC 1's email."),
+            step("PC 2 Parallel Task", "Run PC 2 macro sequence", "Previous Step", "PC1_READY email detected", "PC 2 source files", "PC 2 task result", "Daily finish check", "07:06", "Running", "Runs at the same time as PC 1 and PC 3 post-email tasks.")
           ]
         },
         {
           name: "PC 3",
           steps: [
-            step("Open Dashboard", "Open monitoring dashboard", "Manual", "Operator starts dashboard", "Daily dashboard file", "Dashboard is ready", "Watch Queue", "07:00", "Ready", "Used as visual control station."),
-            step("Watch Queue", "Monitor workflow email queue", "Email", "Batch emails and PROCESSING DONE", "PC 1 and PC 2 email outputs", "Status checklist updates", "Validate Batch Status", "07:20", "Running", "Flags missing emails."),
-            step("Validate Batch Status", "Check every batch marker", "Condition", "All expected messages received", "Batch 1, batch 2, processing done", "Flow marked finished", "Daily Summary", "07:45", "Success", "Only mark finished after all indicators pass."),
-            step("Daily Summary", "Send daily status summary", "Previous Step", "Validation complete", "Completed checklist", "Sends final summary email", "End of flow", "07:50", "Finished", "This is the final confirmation.")
+            step("Wait for Broadcast", "Watch inbox for PC1_READY", "Email", "Email subject contains PC1_READY", "Broadcast email from PC 1", "PC 3 automation starts", "PC 3 parallel task", "07:05", "Waiting", "PC 3 starts from the same shared trigger as PC 1 and PC 2."),
+            step("PC 3 Parallel Task", "Run PC 3 validation and reporting", "Previous Step", "PC1_READY email detected", "PC 3 dashboard file", "PC 3 task result", "Daily finish check", "07:06", "Running", "Runs concurrently after the broadcast trigger."),
+            step("Daily Finish Check", "Confirm all PC outputs are complete", "Condition", "PC 1, PC 2, and PC 3 results received", "All parallel task outputs", "Workflow marked finished", "End of flow", "07:45", "Finished", "Final confirmation happens after all parallel work is complete.")
           ]
         }
       ]
@@ -767,12 +919,25 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
           { name: "PC 1", steps: [blankStep()] },
           { name: "PC 2", steps: [blankStep()] },
           { name: "PC 3", steps: [blankStep()] }
-        ]
+        ],
+        errors: []
       };
     }
 
     function blankStep() {
       return step("New Step", "", "Previous Step", "", "", "", "", "", "", "");
+    }
+
+    function blankError() {
+      return {
+        id: uid(),
+        pcName: state?.pcs?.[activePc]?.name || `PC ${activePc + 1}`,
+        stepName: "",
+        description: "",
+        frequency: "Occasionally",
+        resolution: "",
+        status: "Unsolved"
+      };
     }
 
     async function loadState() {
@@ -810,6 +975,13 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
           }))
         };
       });
+      next.errors = Array.isArray(input.errors) ? input.errors.map((item) => ({
+        ...blankError(),
+        ...item,
+        id: item.id || uid(),
+        frequency: ["Rarely", "Occasionally", "Frequently"].includes(item.frequency) ? item.frequency : "Occasionally",
+        status: item.status === "Solved" ? "Solved" : "Unsolved"
+      })) : [];
       return next;
     }
 
@@ -856,6 +1028,14 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
         d: value.dateLabel || "",
         o: value.owner || "",
         j: value.objective || "",
+        e: (value.errors || []).map((item) => trimArray([
+          item.pcName || "",
+          item.stepName || "",
+          item.description || "",
+          item.frequency || "",
+          item.resolution || "",
+          item.status || ""
+        ])),
         p: value.pcs.map((pc) => [
           pc.name || "",
           pc.steps.map((item) => trimArray([
@@ -881,6 +1061,14 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
           dateLabel: value.d || "",
           owner: value.o || "",
           objective: value.j || "",
+          errors: Array.isArray(value.e) ? value.e.map((item) => ({
+            pcName: item[0] || "",
+            stepName: item[1] || "",
+            description: item[2] || "",
+            frequency: item[3] || "Occasionally",
+            resolution: item[4] || "",
+            status: item[5] || "Unsolved"
+          })) : [],
           pcs: value.p.map((pc, pcIndex) => ({
             name: pc[0] || `PC ${pcIndex + 1}`,
             steps: Array.isArray(pc[1]) ? pc[1].map((item) => ({
@@ -903,6 +1091,7 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
         dateLabel: value.dateLabel || "",
         owner: value.owner || "",
         objective: value.objective || "",
+        errors: Array.isArray(value.errors) ? value.errors.map(({ id, ...rest }) => rest) : [],
         pcs: (value.pcs || []).map((pc) => ({
           name: pc.name || "",
           steps: (pc.steps || []).map(({ id, ...rest }) => rest)
@@ -1061,6 +1250,19 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
         <div class="mt-3 space-y-3">
           ${pc.steps.map((item, index) => stepEditorHtml(item, index)).join("")}
         </div>
+
+        <div class="mt-5 border-t border-[#dcece1] pt-4">
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="text-base font-black text-[#17221f]">Errors</h3>
+            <button class="toolbar-btn btn-secondary !min-h-9 !px-3 !py-2" id="addErrorBtn" type="button">
+              <i data-lucide="circle-alert" class="h-4 w-4"></i>
+              Add Error
+            </button>
+          </div>
+          <div class="mt-3 space-y-3">
+            ${(state.errors || []).map((item, index) => errorEditorHtml(item, index)).join("") || `<div class="empty-state">No errors logged yet.</div>`}
+          </div>
+        </div>
       `;
 
       holder.querySelectorAll("[data-pc-field]").forEach((field) => {
@@ -1120,6 +1322,38 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
         pc.steps.push(blankStep());
         saveState();
         renderAll();
+      });
+
+      holder.querySelectorAll("[data-error-field]").forEach((field) => {
+        field.addEventListener("input", () => {
+          const errorIndex = Number(field.dataset.errorIndex);
+          const key = field.dataset.errorField;
+          state.errors[errorIndex][key] = field.value;
+          scheduleStateSync();
+        });
+        field.addEventListener("change", () => {
+          const errorIndex = Number(field.dataset.errorIndex);
+          const key = field.dataset.errorField;
+          state.errors[errorIndex][key] = field.value;
+          scheduleStateSync();
+        });
+      });
+
+      holder.querySelectorAll("[data-remove-error]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const errorIndex = Number(button.dataset.removeError);
+          state.errors.splice(errorIndex, 1);
+          saveState();
+          renderAll();
+          showToast("Error removed");
+        });
+      });
+
+      document.getElementById("addErrorBtn").addEventListener("click", () => {
+        state.errors.push(blankError());
+        saveState();
+        renderAll();
+        showToast("Error added");
       });
     }
 
@@ -1198,11 +1432,64 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
       `;
     }
 
+    function errorEditorHtml(item, index) {
+      const prefix = `error-${index}`;
+      const pcOptions = state.pcs.map((pc, pcIndex) => pc.name || `PC ${pcIndex + 1}`);
+      const frequencyOptions = ["Rarely", "Occasionally", "Frequently"];
+      const statusOptions = ["Unsolved", "Solved"];
+      return `
+        <section class="error-editor">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2 text-sm font-black text-[#b94711]">
+              <span class="grid h-7 w-7 place-items-center rounded-full bg-[#e66a22] text-xs text-white">${index + 1}</span>
+              Error ${index + 1}
+            </div>
+            <button class="toolbar-btn btn-danger !min-h-8 !px-2 !py-1" type="button" data-remove-error="${index}" title="Remove error" aria-label="Remove error ${index + 1}">
+              <i data-lucide="trash-2" class="h-4 w-4"></i>
+            </button>
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label for="${prefix}-pcName">PC Name</label>
+              <select id="${prefix}-pcName" data-error-index="${index}" data-error-field="pcName">
+                ${pcOptions.map((option) => `<option value="${escapeHtml(option)}" ${item.pcName === option ? "selected" : ""}>${escapeHtml(option)}</option>`).join("")}
+              </select>
+            </div>
+            <div>
+              <label for="${prefix}-stepName">Step Name</label>
+              <input id="${prefix}-stepName" data-error-index="${index}" data-error-field="stepName" value="${escapeHtml(item.stepName)}" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="${prefix}-description">Error Description</label>
+              <textarea id="${prefix}-description" data-error-index="${index}" data-error-field="description">${escapeHtml(item.description)}</textarea>
+            </div>
+            <div>
+              <label for="${prefix}-frequency">Frequency</label>
+              <select id="${prefix}-frequency" data-error-index="${index}" data-error-field="frequency">
+                ${frequencyOptions.map((option) => `<option value="${option}" ${item.frequency === option ? "selected" : ""}>${option}</option>`).join("")}
+              </select>
+            </div>
+            <div>
+              <label for="${prefix}-status">Status</label>
+              <select id="${prefix}-status" data-error-index="${index}" data-error-field="status">
+                ${statusOptions.map((option) => `<option value="${option}" ${item.status === option ? "selected" : ""}>${option}</option>`).join("")}
+              </select>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="${prefix}-resolution">Resolution / Solution</label>
+              <textarea id="${prefix}-resolution" data-error-index="${index}" data-error-field="resolution">${escapeHtml(item.resolution)}</textarea>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
     function renderPreview(sourceState) {
       lastRenderedState = clone(sourceState);
       const target = document.getElementById("infographic");
       const totalSteps = sourceState.pcs.reduce((sum, pc) => sum + pc.steps.length, 0);
-      const outputs = sourceState.pcs.flatMap((pc) => pc.steps.filter((item) => item.output || item.next));
+      const errorCount = (sourceState.errors || []).length;
+      const unsolvedCount = (sourceState.errors || []).filter((item) => item.status !== "Solved").length;
 
       target.innerHTML = `
         <header class="info-header">
@@ -1222,14 +1509,14 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
             </div>
             <div class="mt-4 grid grid-cols-2 gap-3 text-sm font-bold">
               <div><span class="block text-2xl font-black">${totalSteps}</span>Total Steps</div>
-              <div><span class="block text-2xl font-black">${outputs.length}</span>Handoffs</div>
+              <div><span class="block text-2xl font-black">${unsolvedCount}/${errorCount}</span>Open Errors</div>
               <div class="col-span-2">${escapeHtml(sourceState.dateLabel || "")}</div>
               <div class="col-span-2">${escapeHtml(sourceState.owner || "")}</div>
             </div>
           </aside>
         </header>
 
-        <div class="section-title">Sequential PC Workflow</div>
+        <div class="section-title">PC 1 Broadcast, Then Parallel Workflow</div>
         <section class="lanes">
           ${sourceState.pcs.map((pc, index) => laneHtml(pc, index)).join("")}
         </section>
@@ -1237,10 +1524,10 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
         <section class="bottom-grid">
           <div class="doc-box">
             <div class="doc-title">
-              <i data-lucide="send" class="h-6 w-6"></i>
-              Trigger Handoffs
+              <i data-lucide="circle-alert" class="h-6 w-6"></i>
+              System Errors / Resolution Log
             </div>
-            ${handoffTableHtml(sourceState)}
+            ${errorLogHtml(sourceState)}
           </div>
           <div class="doc-box">
             <div class="doc-title">
@@ -1248,10 +1535,10 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
               Workflow Control Points
             </div>
             <div class="metric-grid">
-              ${controlPointHtml("Triggers", "mail-check", "Scheduler, email, manual, and condition-based starts are documented.")}
-              ${controlPointHtml("Outputs", "send-horizontal", "Emails, status flags, completed files, and finish markers are visible.")}
-              ${controlPointHtml("Dependencies", "git-branch", "Inputs and handoffs show where each step receives its data.")}
-              ${controlPointHtml("Finish", "badge-check", "Final status confirms when the full daily routine is complete.")}
+              ${controlPointHtml("Start Gate", "mail-check", "PC 1 completion email is the shared trigger for every PC.")}
+              ${controlPointHtml("Parallel Run", "git-branch", "PC 1, PC 2, and PC 3 continue their own tasks at the same time.")}
+              ${controlPointHtml("Errors", "circle-alert", "Any PC or step error is logged with frequency, status, and solution.")}
+              ${controlPointHtml("Finish", "badge-check", "Final status is confirmed only after all critical errors are solved.")}
             </div>
           </div>
         </section>
@@ -1263,7 +1550,7 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
           </div>
           <div class="flex items-center gap-3">
             <i data-lucide="bar-chart-3" class="h-7 w-7"></i>
-            Clean steps. Clear triggers. Reliable handoffs.
+            One shared trigger. Three parallel PC lanes.
           </div>
         </footer>
       `;
@@ -1357,12 +1644,63 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
       `;
     }
 
+    function errorLogHtml(value) {
+      const errors = Array.isArray(value.errors) ? value.errors : [];
+      if (!errors.length) {
+        return `<div class="empty-state m-4">No errors logged yet.</div>`;
+      }
+
+      return `
+        <div class="trigger-summary">
+          <div class="trigger-summary-item">
+            <div class="trigger-summary-label">Open Errors</div>
+            <div class="trigger-summary-value">${errors.filter((item) => item.status !== "Solved").length}</div>
+          </div>
+          <div class="trigger-summary-item">
+            <div class="trigger-summary-label">Solved Errors</div>
+            <div class="trigger-summary-value">${errors.filter((item) => item.status === "Solved").length}</div>
+          </div>
+        </div>
+        <div class="error-grid">
+          ${errors.map((item) => {
+            const solved = item.status === "Solved";
+            return `
+              <article class="error-card ${solved ? "solved" : ""}">
+                <div class="error-card-head">
+                  <div>
+                    <div class="error-pc">${escapeHtml(item.pcName || "PC")}</div>
+                    <div class="error-step">${escapeHtml(item.stepName || "Unassigned Step")}</div>
+                  </div>
+                  <div class="error-status">${escapeHtml(item.status || "Unsolved")}</div>
+                </div>
+                <div class="error-meta">
+                  <i data-lucide="activity" class="h-3.5 w-3.5"></i>
+                  ${escapeHtml(item.frequency || "Occasionally")}
+                </div>
+                <div class="error-text"><strong>Error:</strong> ${escapeHtml(item.description || "No description added.")}</div>
+                <div class="error-text mt-1"><strong>Solution:</strong> ${escapeHtml(item.resolution || "No resolution added yet.")}</div>
+              </article>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
     function handoffTableHtml(value) {
       const rows = [];
       value.pcs.forEach((pc) => {
         pc.steps.forEach((item, index) => {
           if (item.output || item.next || item.triggerDetail) {
-            rows.push({ pc: pc.name, step: item.name || `Step ${index + 1}`, trigger: item.triggerDetail || item.triggerType, output: item.output, next: item.next });
+            const isBroadcast = /all\s*3\s*pc|pc 1,\s*pc 2,\s*and\s*pc 3|parallel/i.test(`${item.action} ${item.output} ${item.next} ${item.notes}`);
+            rows.push({
+              pc: pc.name,
+              step: item.name || `Step ${index + 1}`,
+              trigger: item.triggerDetail || item.triggerType,
+              output: item.output,
+              next: item.next,
+              receivers: isBroadcast ? "PC 1, PC 2, PC 3" : pc.name,
+              mode: isBroadcast ? "Broadcast trigger" : (item.triggerType === "Email" ? "Email listener" : "Local step")
+            });
           }
         });
       });
@@ -1372,24 +1710,34 @@ const STORAGE_KEY = "threePcWorkflowBuilder.v1";
       }
 
       return `
+        <div class="trigger-summary">
+          <div class="trigger-summary-item">
+            <div class="trigger-summary-label">Purpose</div>
+            <div class="trigger-summary-value">Show the email signal that unlocks parallel work.</div>
+          </div>
+          <div class="trigger-summary-item">
+            <div class="trigger-summary-label">Expected Logic</div>
+            <div class="trigger-summary-value">PC 1 runs first, then all PCs continue together.</div>
+          </div>
+        </div>
         <table class="handoff-table">
           <thead>
             <tr>
-              <th style="width: 16%">PC</th>
-              <th style="width: 22%">Step</th>
-              <th style="width: 22%">Trigger</th>
-              <th style="width: 22%">Output</th>
-              <th style="width: 18%">Next</th>
+              <th style="width: 16%">Source</th>
+              <th style="width: 22%">Trigger Event</th>
+              <th style="width: 22%">Signal / Output</th>
+              <th style="width: 20%">Receivers</th>
+              <th style="width: 20%">Start Result</th>
             </tr>
           </thead>
           <tbody>
             ${rows.map((row) => `
               <tr>
                 <td>${escapeHtml(row.pc)}</td>
-                <td>${escapeHtml(row.step)}</td>
-                <td>${escapeHtml(row.trigger)}</td>
-                <td>${escapeHtml(row.output)}</td>
-                <td>${escapeHtml(row.next)}</td>
+                <td>${escapeHtml(row.trigger || row.step)}</td>
+                <td>${escapeHtml(row.output || row.step)}</td>
+                <td>${escapeHtml(row.receivers)}</td>
+                <td>${escapeHtml(row.next || row.mode)}</td>
               </tr>
             `).join("")}
           </tbody>
