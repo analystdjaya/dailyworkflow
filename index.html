@@ -735,16 +735,6 @@
       transform: translateY(0);
     }
 
-    .export-host {
-      position: fixed;
-      left: -10000px;
-      top: 0;
-      z-index: -1;
-      width: 1480px;
-      background: #fff;
-      pointer-events: none;
-    }
-
     @media (max-width: 1180px) {
       .app-shell { grid-template-columns: 1fr; }
       .preview-wrap { max-height: none; }
@@ -1853,37 +1843,34 @@
 
     async function downloadImage(type) {
       const previewNode = document.getElementById("infographic");
+      const previewStage = document.querySelector(".preview-stage");
       if (!window.html2canvas) {
         showToast("Download library is still loading. Try again in a moment.");
         return;
       }
+      if (!previewNode || !previewStage) {
+        showToast("Preview is not ready yet.");
+        return;
+      }
       const downloadButtons = [document.getElementById("downloadPngBtn"), document.getElementById("downloadJpgBtn")].filter(Boolean);
-      let host = null;
-      let node = null;
       try {
         downloadButtons.forEach((button) => button.disabled = true);
         renderPreview(lastRenderedState || state);
         showToast("Preparing image...");
-
-        host = document.createElement("div");
-        host.className = "export-host";
-        node = previewNode.cloneNode(true);
-        node.id = "infographic-export";
-        host.appendChild(node);
-        document.body.appendChild(host);
 
         if (document.fonts && document.fonts.ready) {
           await document.fonts.ready;
         }
         await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-        const exportWidth = Math.ceil(node.getBoundingClientRect().width);
-        const exportHeight = Math.ceil(node.getBoundingClientRect().height);
+        const exportRect = previewStage.getBoundingClientRect();
+        const exportWidth = Math.ceil(exportRect.width);
+        const exportHeight = Math.ceil(exportRect.height);
         if (exportHeight > 9000 && !confirm("This workflow is very tall and may take a moment to export. Continue?")) {
           showToast("Download cancelled");
           return;
         }
-        const canvas = await html2canvas(node, {
+        const canvas = await html2canvas(previewStage, {
           backgroundColor: "#ffffff",
           scale: 2,
           useCORS: true,
@@ -1910,7 +1897,6 @@
         showToast("Download failed. Please refresh and try again.");
         alert("Download failed. Please refresh the page and try again. If it still fails, make sure the page is opened from GitHub Pages, not from the GitHub file preview.");
       } finally {
-        if (host) host.remove();
         downloadButtons.forEach((button) => button.disabled = false);
       }
     }
