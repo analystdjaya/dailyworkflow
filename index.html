@@ -402,23 +402,35 @@
     }
 
     .chip {
-      display: inline-flex;
+      display: inline-grid;
+      grid-template-columns: auto minmax(0, auto);
       align-items: center;
-      gap: 5px;
+      justify-content: center;
+      column-gap: 5px;
       max-width: 100%;
+      min-height: 28px;
       border-radius: 999px;
-      padding: 5px 8px;
+      padding: 0 8px;
       background: #eff8f2;
       color: #164a33;
       border: 1px solid #cce4d5;
       font-size: 11px;
       font-weight: 800;
       line-height: 1;
-      overflow-wrap: anywhere;
     }
 
     .chip svg {
-      flex: 0 0 auto;
+      display: block;
+      width: 14px;
+      height: 14px;
+      align-self: center;
+    }
+
+    .chip-label {
+      display: block;
+      min-width: 0;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .result-box {
@@ -460,15 +472,35 @@
     }
 
     .arrow-pill {
-      display: inline-flex;
+      display: inline-grid;
+      grid-template-columns: auto minmax(0, auto);
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      column-gap: 6px;
       max-width: 260px;
+      min-height: 28px;
       border: 1px solid #cfe4d7;
       background: #fff;
       border-radius: 999px;
-      padding: 5px 8px;
-      overflow-wrap: anywhere;
+      padding: 0 8px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .arrow-pill svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+      align-self: center;
+    }
+
+    .arrow-label {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      line-height: 1;
     }
 
     .bottom-grid {
@@ -620,17 +652,35 @@
     }
 
     .error-meta {
-      display: inline-flex;
+      display: inline-grid;
+      grid-template-columns: auto minmax(0, auto);
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      column-gap: 6px;
       margin-bottom: 8px;
+      min-height: 28px;
       border-radius: 999px;
       background: #f6fbf7;
       border: 1px solid #d6e6dc;
-      padding: 5px 8px;
+      padding: 0 9px;
       color: #315346;
       font-size: 11px;
       font-weight: 900;
+      line-height: 1;
+    }
+
+    .error-meta svg {
+      display: block;
+      width: 14px;
+      height: 14px;
+      align-self: center;
+    }
+
+    .error-meta-label {
+      display: block;
+      min-width: 0;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .error-text {
@@ -1715,7 +1765,7 @@
     }
 
     function chipHtml(icon, text) {
-      return `<span class="chip"><i data-lucide="${icon}" class="h-3.5 w-3.5"></i>${escapeHtml(text)}</span>`;
+      return `<span class="chip"><i data-lucide="${icon}" class="h-3.5 w-3.5"></i><span class="chip-label">${escapeHtml(text)}</span></span>`;
     }
 
     function arrowHtml(current, next) {
@@ -1724,7 +1774,7 @@
         <div class="flow-arrow">
           <span class="arrow-pill">
             <i data-lucide="arrow-down" class="h-4 w-4"></i>
-            ${escapeHtml(label)}
+            <span class="arrow-label">${escapeHtml(label)}</span>
           </span>
         </div>
       `;
@@ -1761,7 +1811,7 @@
                 </div>
                 <div class="error-meta">
                   <i data-lucide="activity" class="h-3.5 w-3.5"></i>
-                  ${escapeHtml(item.frequency || "Occasionally")}
+                  <span class="error-meta-label">${escapeHtml(item.frequency || "Occasionally")}</span>
                 </div>
                 <div class="error-text"><strong>Error:</strong> ${escapeHtml(item.description || "No description added.")}</div>
                 <div class="error-text mt-1"><strong>Solution:</strong> ${escapeHtml(item.resolution || "No resolution added yet.")}</div>
@@ -1873,9 +1923,11 @@
         const canvas = await html2canvas(previewStage, {
           backgroundColor: "#ffffff",
           scale: 2,
+          foreignObjectRendering: true,
           useCORS: true,
           allowTaint: true,
           logging: false,
+          imageTimeout: 0,
           width: exportWidth,
           height: exportHeight,
           windowWidth: exportWidth,
