@@ -377,13 +377,21 @@
       height: 34px;
       flex: 0 0 34px;
       border-radius: 999px;
-      display: grid;
-      place-items: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: var(--lane-color);
       color: #fff;
       font-weight: 950;
       font-size: 13px;
-      transform: translateY(-6px);
+      line-height: 1;
+      transform: translateY(-2px);
+    }
+
+    .step-badge-text {
+      display: block;
+      line-height: 1;
+      transform: translateY(-1px);
     }
 
     .node-title {
@@ -438,7 +446,7 @@
       display: inline-block;
       line-height: 1.25;
       white-space: nowrap;
-      transform: translateY(-6px);
+      transform: translateY(-1px);
     }
 
     .result-box {
@@ -510,7 +518,7 @@
       text-overflow: clip;
       white-space: nowrap;
       line-height: 1.25;
-      transform: translateY(-6px);
+      transform: translateY(-1px);
     }
 
     .bottom-grid {
@@ -1730,7 +1738,7 @@
       return `
         <article class="flow-node">
           <div class="node-top">
-            <div class="step-badge">${index + 1}</div>
+            <div class="step-badge"><span class="step-badge-text">${index + 1}</span></div>
             <div class="min-w-0">
               <div class="node-title">${escapeHtml(item.name || `Step ${index + 1}`)}</div>
               ${item.time ? `<div class="mt-1 text-xs font-black uppercase text-[#6b7d74]">${escapeHtml(item.time)}</div>` : ""}
