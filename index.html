@@ -11,6 +11,7 @@
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://analystdjaya.github.io/dailyworkflow/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b6b45'/%3E%3Cpath d='M18 20h12v8H18zm16 0h12v8H34zM18 36h12v8H18zm16 0h12v8H34z' fill='white'/%3E%3Cpath d='M30 24h4M24 28v8m16-8v8m-10 4h4' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
   <script src="https://unpkg.com/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <style>
@@ -1886,7 +1887,7 @@
     async function downloadImage(type) {
       const previewNode = document.getElementById("infographic");
       const previewStage = document.querySelector(".preview-stage");
-      if (!window.html2canvas) {
+      if (!window.html2canvas && !window.htmlToImage) {
         showToast("Download library is still loading. Try again in a moment.");
         return;
       }
@@ -1914,7 +1915,7 @@
           showToast("Download cancelled");
           return;
         }
-        const exportOptions = {
+        const fallbackOptions = {
           backgroundColor: "#ffffff",
           scale: 2,
           useCORS: true,
@@ -1928,12 +1929,34 @@
           scrollX: 0,
           scrollY: 0
         };
-        const canvas = await html2canvas(previewNode, exportOptions);
         const mime = type === "jpg" ? "image/jpeg" : "image/png";
         const extension = type === "jpg" ? "jpg" : "png";
+        let imageHref;
+        if (window.htmlToImage) {
+          try {
+            const exactOptions = {
+              backgroundColor: "#ffffff",
+              cacheBust: true,
+              height: exportHeight,
+              pixelRatio: 2,
+              width: exportWidth
+            };
+            imageHref = type === "jpg"
+              ? await htmlToImage.toJpeg(previewNode, { ...exactOptions, quality: 0.96 })
+              : await htmlToImage.toPng(previewNode, exactOptions);
+          } catch (error) {
+            console.warn("Preview-accurate export failed; using fallback renderer.", error);
+          }
+        }
+
+        if (!imageHref) {
+          const canvas = await html2canvas(previewNode, fallbackOptions);
+          imageHref = canvas.toDataURL(mime, type === "jpg" ? 0.96 : 1);
+        }
+
         const link = document.createElement("a");
         link.download = `${slugify(state.title || "3pc-workflow")}.${extension}`;
-        link.href = canvas.toDataURL(mime, type === "jpg" ? 0.96 : 1);
+        link.href = imageHref;
         document.body.appendChild(link);
         link.click();
         link.remove();
