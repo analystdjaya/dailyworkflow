@@ -172,6 +172,22 @@
       padding: 14px;
     }
 
+    .step-menu-section {
+      border: 1px solid #dcece1;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 12px;
+    }
+
+    .step-menu-title {
+      color: var(--green-900);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .04em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
     .error-editor {
       border: 1px solid #f1c9b8;
       border-radius: 15px;
@@ -965,7 +981,7 @@
     };
 
     function step(name, action, triggerType, triggerDetail, input, output, next, time, status, notes) {
-      return { id: uid(), name, action, triggerType, triggerDetail, input, output, next, time, status, notes };
+      return { id: uid(), name, action, triggerType, triggerDetail, input, output, next, time, status, notes, nextTriggerType: "Email", nextTrigger: output || next || "" };
     }
 
     function uid() {
@@ -1038,6 +1054,8 @@
           steps: steps.map((item) => ({
             ...blankStep(),
             ...item,
+            nextTriggerType: item.nextTriggerType || "Email",
+            nextTrigger: item.nextTrigger || item.output || item.next || "",
             id: item.id || uid()
           }))
         };
@@ -1115,7 +1133,9 @@
             item.next || "",
             item.time || "",
             item.status || "",
-            item.notes || ""
+            item.notes || "",
+            item.nextTriggerType || "",
+            item.nextTrigger || ""
           ]))
         ])
       };
@@ -1148,7 +1168,9 @@
               next: item[6] || "",
               time: item[7] || "",
               status: item[8] || "",
-              notes: item[9] || ""
+              notes: item[9] || "",
+              nextTriggerType: item[10] || "Email",
+              nextTrigger: item[11] || item[5] || item[6] || ""
             })) : [blankStep()]
           }))
         };
@@ -1161,7 +1183,11 @@
         errors: Array.isArray(value.errors) ? value.errors.map(({ id, ...rest }) => rest) : [],
         pcs: (value.pcs || []).map((pc) => ({
           name: pc.name || "",
-          steps: (pc.steps || []).map(({ id, ...rest }) => rest)
+          steps: (pc.steps || []).map(({ id, ...rest }) => ({
+            ...rest,
+            nextTriggerType: rest.nextTriggerType || "Email",
+            nextTrigger: rest.nextTrigger || rest.output || rest.next || ""
+          }))
         }))
       };
     }
@@ -1515,25 +1541,43 @@
               <label for="${prefix}-action">Action / Macro Name</label>
               <input id="${prefix}-action" data-step-index="${index}" data-step-field="action" value="${escapeHtml(item.action)}" />
             </div>
-            <div>
-              <label for="${prefix}-triggerType">Trigger Type</label>
-              <select id="${prefix}-triggerType" data-step-index="${index}" data-step-field="triggerType">
-                ${["Scheduler", "Email", "Manual", "Previous Step", "Condition", "Startup"].map((option) => `
-                  <option value="${option}" ${item.triggerType === option ? "selected" : ""}>${option}</option>
-                `).join("")}
-              </select>
-            </div>
-            <div>
-              <label for="${prefix}-triggerDetail">Trigger Detail</label>
-              <input id="${prefix}-triggerDetail" data-step-index="${index}" data-step-field="triggerDetail" value="${escapeHtml(item.triggerDetail)}" />
-            </div>
-            <div>
+            <div class="step-menu-section sm:col-span-2">
+              <div class="step-menu-title">Step Output</div>
               <label for="${prefix}-output">Output / Result</label>
               <input id="${prefix}-output" data-step-index="${index}" data-step-field="output" value="${escapeHtml(item.output)}" />
             </div>
-            <div>
-              <label for="${prefix}-next">Next Step / Handoff</label>
-              <input id="${prefix}-next" data-step-index="${index}" data-step-field="next" value="${escapeHtml(item.next)}" />
+            <div class="step-menu-section sm:col-span-2">
+              <div class="step-menu-title">Next Batch Trigger</div>
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label for="${prefix}-triggerType">Current Trigger Type</label>
+                  <select id="${prefix}-triggerType" data-step-index="${index}" data-step-field="triggerType">
+                    ${["Scheduler", "Email", "Manual", "Previous Step", "Condition", "Startup"].map((option) => `
+                      <option value="${option}" ${item.triggerType === option ? "selected" : ""}>${option}</option>
+                    `).join("")}
+                  </select>
+                </div>
+                <div>
+                  <label for="${prefix}-triggerDetail">Current Trigger Detail</label>
+                  <input id="${prefix}-triggerDetail" data-step-index="${index}" data-step-field="triggerDetail" value="${escapeHtml(item.triggerDetail)}" />
+                </div>
+                <div>
+                  <label for="${prefix}-nextTriggerType">Next Trigger Type</label>
+                  <select id="${prefix}-nextTriggerType" data-step-index="${index}" data-step-field="nextTriggerType">
+                    ${["Email", "Scheduler", "Manual", "Previous Step", "Condition", "Startup"].map((option) => `
+                      <option value="${option}" ${(item.nextTriggerType || "Email") === option ? "selected" : ""}>${option}</option>
+                    `).join("")}
+                  </select>
+                </div>
+                <div class="sm:col-span-2">
+                  <label for="${prefix}-next">Next Step / Handoff</label>
+                  <input id="${prefix}-next" data-step-index="${index}" data-step-field="next" value="${escapeHtml(item.next)}" />
+                </div>
+                <div class="sm:col-span-2">
+                  <label for="${prefix}-nextTrigger">Next Trigger Detail</label>
+                  <input id="${prefix}-nextTrigger" data-step-index="${index}" data-step-field="nextTrigger" value="${escapeHtml(item.nextTrigger || "")}" />
+                </div>
+              </div>
             </div>
             <div class="sm:col-span-2">
               <label for="${prefix}-notes">Notes</label>
@@ -1749,7 +1793,7 @@
     }
 
     function arrowHtml(current, next) {
-      const label = current.output || next.triggerDetail || "Next step";
+      const label = current.nextTrigger || next.triggerDetail || "Next step";
       return `
         <div class="flow-arrow">
           <span class="arrow-pill">
@@ -1804,14 +1848,15 @@
       const rows = [];
       value.pcs.forEach((pc) => {
         pc.steps.forEach((item, index) => {
-          if (item.output || item.next || item.triggerDetail) {
-            const isBroadcast = /all\s*3\s*pc|pc 1,\s*pc 2,\s*and\s*pc 3|parallel/i.test(`${item.action} ${item.output} ${item.next} ${item.notes}`);
+          if (item.output || item.next || item.nextTrigger || item.triggerDetail) {
+            const isBroadcast = /all\s*3\s*pc|pc 1,\s*pc 2,\s*and\s*pc 3|parallel/i.test(`${item.action} ${item.output} ${item.next} ${item.nextTrigger} ${item.notes}`);
             rows.push({
               pc: pc.name,
               step: item.name || `Step ${index + 1}`,
               trigger: item.triggerDetail || item.triggerType,
               output: item.output,
               next: item.next,
+              nextTrigger: item.nextTrigger,
               receivers: isBroadcast ? "PC 1, PC 2, PC 3" : pc.name,
               mode: isBroadcast ? "Broadcast trigger" : (item.triggerType === "Email" ? "Email listener" : "Local step")
             });
@@ -1851,7 +1896,7 @@
                 <td>${escapeHtml(row.trigger || row.step)}</td>
                 <td>${escapeHtml(row.output || row.step)}</td>
                 <td>${escapeHtml(row.receivers)}</td>
-                <td>${escapeHtml(row.next || row.mode)}</td>
+                <td>${escapeHtml(row.nextTrigger || row.next || row.mode)}</td>
               </tr>
             `).join("")}
           </tbody>
