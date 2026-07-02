@@ -1511,10 +1511,6 @@
               <label for="${prefix}-name">Step Name</label>
               <input id="${prefix}-name" data-step-index="${index}" data-step-field="name" value="${escapeHtml(item.name)}" />
             </div>
-            <div>
-              <label for="${prefix}-time">Time</label>
-              <input id="${prefix}-time" data-step-index="${index}" data-step-field="time" value="${escapeHtml(item.time)}" placeholder="07:00" />
-            </div>
             <div class="sm:col-span-2">
               <label for="${prefix}-action">Action / Macro Name</label>
               <input id="${prefix}-action" data-step-index="${index}" data-step-field="action" value="${escapeHtml(item.action)}" />
@@ -1532,20 +1528,12 @@
               <input id="${prefix}-triggerDetail" data-step-index="${index}" data-step-field="triggerDetail" value="${escapeHtml(item.triggerDetail)}" />
             </div>
             <div>
-              <label for="${prefix}-input">Input / Dependency</label>
-              <input id="${prefix}-input" data-step-index="${index}" data-step-field="input" value="${escapeHtml(item.input)}" />
-            </div>
-            <div>
               <label for="${prefix}-output">Output / Result</label>
               <input id="${prefix}-output" data-step-index="${index}" data-step-field="output" value="${escapeHtml(item.output)}" />
             </div>
             <div>
               <label for="${prefix}-next">Next Step / Handoff</label>
               <input id="${prefix}-next" data-step-index="${index}" data-step-field="next" value="${escapeHtml(item.next)}" />
-            </div>
-            <div>
-              <label for="${prefix}-status">Status Indicator</label>
-              <input id="${prefix}-status" data-step-index="${index}" data-step-field="status" value="${escapeHtml(item.status)}" />
             </div>
             <div class="sm:col-span-2">
               <label for="${prefix}-notes">Notes</label>
@@ -1742,16 +1730,13 @@
             <div class="step-badge"><span class="step-badge-text">${index + 1}</span></div>
             <div class="min-w-0">
               <div class="node-title">${escapeHtml(item.name || `Step ${index + 1}`)}</div>
-              ${item.time ? `<div class="mt-1 text-xs font-black uppercase text-[#6b7d74]">${escapeHtml(item.time)}</div>` : ""}
             </div>
           </div>
           ${item.action ? `<div class="node-action">${escapeHtml(item.action)}</div>` : ""}
           <div class="chip-row">
             ${item.triggerType ? chipHtml("zap", item.triggerType) : ""}
             ${item.triggerDetail ? chipHtml("mail", item.triggerDetail) : ""}
-            ${item.status ? chipHtml("check", item.status) : ""}
           </div>
-          ${item.input ? `<div class="note-text"><strong>Input:</strong> ${escapeHtml(item.input)}</div>` : ""}
           ${item.output ? `<div class="result-box"><strong>Output:</strong> ${escapeHtml(item.output)}</div>` : ""}
           ${item.next ? `<div class="note-text"><strong>Next:</strong> ${escapeHtml(item.next)}</div>` : ""}
           ${item.notes ? `<div class="note-text"><strong>Notes:</strong> ${escapeHtml(item.notes)}</div>` : ""}
