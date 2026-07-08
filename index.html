@@ -1643,10 +1643,6 @@
               <label for="${prefix}-name">Step Name</label>
               <input id="${prefix}-name" data-step-index="${index}" data-step-field="name" value="${escapeHtml(item.name)}" />
             </div>
-            <div class="sm:col-span-2">
-              <label for="${prefix}-action">Action / Macro Name</label>
-              <input id="${prefix}-action" data-step-index="${index}" data-step-field="action" value="${escapeHtml(item.action)}" />
-            </div>
             <div class="step-menu-section sm:col-span-2">
               <div class="step-menu-title">Step Output</div>
               <label for="${prefix}-output">Output / Result</label>
@@ -1907,7 +1903,6 @@
               <div class="node-title">${escapeHtml(item.name || `Step ${index + 1}`)}</div>
             </div>
           </div>
-          ${item.action ? `<div class="node-action">${escapeHtml(item.action)}</div>` : ""}
           <div class="chip-row">
             ${item.triggerType ? chipHtml("zap", item.triggerType) : ""}
             ${item.triggerDetail ? chipHtml("mail", item.triggerDetail) : ""}
