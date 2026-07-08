@@ -1580,6 +1580,7 @@
             .map((option) => option.value);
           state.errors[errorIndex].stepNames = values;
           state.errors[errorIndex].stepName = values.join(", ");
+          updateStepCheckboxSummary(field.closest(".checkbox-select"));
           scheduleStateSync();
         });
       });
@@ -1768,6 +1769,13 @@
           </div>
         </section>
       `;
+    }
+
+    function updateStepCheckboxSummary(menu) {
+      if (!menu) return;
+      const count = menu.querySelectorAll("[data-step-checkbox]:checked").length;
+      const label = menu.querySelector(".checkbox-select-toggle span");
+      if (label) label.textContent = count ? `${count} selected` : "None selected";
     }
 
     function renderPreview(sourceState) {
