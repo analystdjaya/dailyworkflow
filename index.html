@@ -928,7 +928,9 @@
         {
           id: uid(),
           pcName: "PC 1",
+          errorName: "Scheduler trigger failed",
           stepName: "Initial Run",
+          stepNames: ["Initial Run"],
           description: "Task Scheduler did not trigger the startup macro.",
           frequency: "Occasionally",
           resolution: "Check Task Scheduler history, confirm the macro file path, and rerun the startup macro manually if needed.",
@@ -937,7 +939,9 @@
         {
           id: uid(),
           pcName: "PC 2",
+          errorName: "Broadcast email delayed",
           stepName: "Wait for Broadcast",
+          stepNames: ["Wait for Broadcast"],
           description: "PC1_READY email arrived late or mailbox rule did not detect it.",
           frequency: "Rarely",
           resolution: "Restart the mailbox rule, confirm inbox sync, and resend the PC1_READY notification if needed.",
@@ -946,7 +950,9 @@
         {
           id: uid(),
           pcName: "PC 3",
+          errorName: "Missing output",
           stepName: "Daily Finish Check",
+          stepNames: ["Daily Finish Check"],
           description: "One PC output was missing during final validation.",
           frequency: "Frequently",
           resolution: "Verify PC 1, PC 2, and PC 3 result files before marking the workflow finished.",
@@ -1015,7 +1021,9 @@
       return {
         id: uid(),
         pcName: state?.pcs?.[activePc]?.name || `PC ${activePc + 1}`,
+        errorName: "",
         stepName: "",
+        stepNames: [],
         description: "",
         frequency: "Occasionally",
         resolution: "",
@@ -1064,6 +1072,9 @@
         ...blankError(),
         ...item,
         id: item.id || uid(),
+        errorName: item.errorName || "",
+        stepNames: Array.isArray(item.stepNames) ? item.stepNames : (item.stepName ? [item.stepName] : []),
+        stepName: Array.isArray(item.stepNames) ? item.stepNames.join(", ") : (item.stepName || ""),
         frequency: ["Rarely", "Occasionally", "Frequently"].includes(item.frequency) ? item.frequency : "Occasionally",
         status: item.status === "Solved" ? "Solved" : "Unsolved"
       })) : [];
@@ -1115,7 +1126,8 @@
         j: value.objective || "",
         e: (value.errors || []).map((item) => trimArray([
           item.pcName || "",
-          item.stepName || "",
+          item.errorName || "",
+          Array.isArray(item.stepNames) ? item.stepNames : (item.stepName ? [item.stepName] : []),
           item.description || "",
           item.frequency || "",
           item.resolution || "",
@@ -1148,14 +1160,22 @@
           dateLabel: value.d || "",
           owner: value.o || "",
           objective: value.j || "",
-          errors: Array.isArray(value.e) ? value.e.map((item) => ({
-            pcName: item[0] || "",
-            stepName: item[1] || "",
-            description: item[2] || "",
-            frequency: item[3] || "Occasionally",
-            resolution: item[4] || "",
-            status: item[5] || "Unsolved"
-          })) : [],
+          errors: Array.isArray(value.e) ? value.e.map((item) => {
+            const hasManualErrorName = item.length > 6;
+            const stepNames = hasManualErrorName
+              ? (Array.isArray(item[2]) ? item[2] : (item[2] ? [item[2]] : []))
+              : (item[1] ? [item[1]] : []);
+            return {
+              pcName: item[0] || "",
+              errorName: hasManualErrorName ? (item[1] || "") : "",
+              stepName: stepNames.join(", "),
+              stepNames,
+              description: hasManualErrorName ? (item[3] || "") : (item[2] || ""),
+              frequency: hasManualErrorName ? (item[4] || "Occasionally") : (item[3] || "Occasionally"),
+              resolution: hasManualErrorName ? (item[5] || "") : (item[4] || ""),
+              status: hasManualErrorName ? (item[6] || "Unsolved") : (item[5] || "Unsolved")
+            };
+          }) : [],
           pcs: value.p.map((pc, pcIndex) => ({
             name: pc[0] || `PC ${pcIndex + 1}`,
             steps: Array.isArray(pc[1]) ? pc[1].map((item) => ({
@@ -1374,7 +1394,7 @@
               <label for="errorSelect">Error Record</label>
               <select id="errorSelect" ${(state.errors || []).length ? "" : "disabled"}>
                 ${(state.errors || []).map((item, index) => `
-                  <option value="${index}" ${index === activeError ? "selected" : ""}>Error ${index + 1}: ${escapeHtml(item.pcName || "PC")} / ${escapeHtml(item.stepName || "Unassigned Step")}</option>
+                  <option value="${index}" ${index === activeError ? "selected" : ""}>Error ${index + 1}: ${escapeHtml(item.pcName || "PC")} / ${escapeHtml(item.errorName || "Manual Error")}</option>
                 `).join("") || `<option>No errors logged</option>`}
               </select>
             </div>
@@ -1463,22 +1483,22 @@
       });
 
       holder.querySelectorAll("[data-error-field]").forEach((field) => {
+        const getErrorFieldValue = () => field.multiple
+          ? Array.from(field.selectedOptions).map((option) => option.value)
+          : field.value;
         field.addEventListener("input", () => {
           const errorIndex = Number(field.dataset.errorIndex);
           const key = field.dataset.errorField;
-          state.errors[errorIndex][key] = field.value;
+          state.errors[errorIndex][key] = getErrorFieldValue();
+          if (key === "stepNames") state.errors[errorIndex].stepName = state.errors[errorIndex].stepNames.join(", ");
           scheduleStateSync();
         });
         field.addEventListener("change", () => {
           const errorIndex = Number(field.dataset.errorIndex);
           const key = field.dataset.errorField;
-          state.errors[errorIndex][key] = field.value;
+          state.errors[errorIndex][key] = getErrorFieldValue();
+          if (key === "stepNames") state.errors[errorIndex].stepName = state.errors[errorIndex].stepNames.join(", ");
           if (key === "pcName") {
-            const pc = state.pcs.find((item) => item.name === field.value);
-            const stepNames = (pc?.steps || []).map((item, index) => item.name || `Step ${index + 1}`);
-            if (!stepNames.includes(state.errors[errorIndex].stepName)) {
-              state.errors[errorIndex].stepName = stepNames[0] || "";
-            }
             saveState();
             renderAll();
             return;
@@ -1595,7 +1615,10 @@
       const stepOptions = (state.pcs[selectedPcIndex]?.steps || [])
         .map((stepItem, stepIndex) => stepItem.name || `Step ${stepIndex + 1}`)
         .filter(Boolean);
-      if (item.stepName && !stepOptions.includes(item.stepName)) stepOptions.unshift(item.stepName);
+      const selectedStepNames = Array.isArray(item.stepNames) ? item.stepNames : (item.stepName ? [item.stepName] : []);
+      selectedStepNames.forEach((stepName) => {
+        if (stepName && !stepOptions.includes(stepName)) stepOptions.unshift(stepName);
+      });
       const frequencyOptions = ["Rarely", "Occasionally", "Frequently"];
       const statusOptions = ["Unsolved", "Solved"];
       return `
@@ -1617,14 +1640,14 @@
               </select>
             </div>
             <div>
-              <label for="${prefix}-stepName">Step Name</label>
-              <select id="${prefix}-stepName" data-error-index="${index}" data-error-field="stepName">
-                ${stepOptions.map((option) => `<option value="${escapeHtml(option)}" ${item.stepName === option ? "selected" : ""}>${escapeHtml(option)}</option>`).join("") || `<option value="">No steps available</option>`}
-              </select>
+              <label for="${prefix}-errorName">Error Name</label>
+              <input id="${prefix}-errorName" data-error-index="${index}" data-error-field="errorName" value="${escapeHtml(item.errorName || "")}" />
             </div>
             <div class="sm:col-span-2">
-              <label for="${prefix}-description">Error Description</label>
-              <textarea id="${prefix}-description" data-error-index="${index}" data-error-field="description">${escapeHtml(item.description)}</textarea>
+              <label for="${prefix}-stepNames">Step</label>
+              <select id="${prefix}-stepNames" data-error-index="${index}" data-error-field="stepNames" multiple>
+                ${stepOptions.map((option) => `<option value="${escapeHtml(option)}" ${selectedStepNames.includes(option) ? "selected" : ""}>${escapeHtml(option)}</option>`).join("") || `<option value="">No steps available</option>`}
+              </select>
             </div>
             <div>
               <label for="${prefix}-frequency">Frequency</label>
@@ -1639,7 +1662,11 @@
               </select>
             </div>
             <div class="sm:col-span-2">
-              <label for="${prefix}-resolution">Resolution / Solution</label>
+              <label for="${prefix}-description">Error</label>
+              <textarea id="${prefix}-description" data-error-index="${index}" data-error-field="description">${escapeHtml(item.description)}</textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label for="${prefix}-resolution">Solution</label>
               <textarea id="${prefix}-resolution" data-error-index="${index}" data-error-field="resolution">${escapeHtml(item.resolution)}</textarea>
             </div>
           </div>
@@ -1830,7 +1857,7 @@
                 <div class="error-card-head">
                   <div>
                     <div class="error-pc">${escapeHtml(item.pcName || "PC")}</div>
-                    <div class="error-step">${escapeHtml(item.stepName || "Unassigned Step")}</div>
+                    <div class="error-step">${escapeHtml(item.errorName || "Manual Error")}${item.stepName ? ` / ${escapeHtml(item.stepName)}` : ""}</div>
                   </div>
                   <div class="error-status">${escapeHtml(item.status || "Unsolved")}</div>
                 </div>
