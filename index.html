@@ -195,6 +195,72 @@
       padding: 14px;
     }
 
+    .checkbox-select {
+      position: relative;
+    }
+
+    .checkbox-select-toggle {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #cfded6;
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 11px;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .checkbox-select-menu {
+      display: none;
+      position: absolute;
+      z-index: 20;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      max-height: 240px;
+      overflow: auto;
+      border: 1px solid #d6e6dc;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 16px 36px rgba(7, 83, 56, .14);
+      padding: 8px;
+    }
+
+    .checkbox-select.open .checkbox-select-menu {
+      display: grid;
+      gap: 4px;
+    }
+
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: none;
+      letter-spacing: 0;
+      margin: 0;
+    }
+
+    .checkbox-option:hover {
+      background: #f3faf5;
+    }
+
+    .checkbox-option input {
+      width: 16px;
+      height: 16px;
+      padding: 0;
+      flex: 0 0 auto;
+    }
+
     .preview-wrap {
       width: 100%;
       max-width: 100%;
@@ -1507,6 +1573,25 @@
         });
       });
 
+      holder.querySelectorAll("[data-step-checkbox]").forEach((field) => {
+        field.addEventListener("change", () => {
+          const errorIndex = Number(field.dataset.errorIndex);
+          const values = Array.from(holder.querySelectorAll(`[data-step-checkbox][data-error-index="${errorIndex}"]:checked`))
+            .map((option) => option.value);
+          state.errors[errorIndex].stepNames = values;
+          state.errors[errorIndex].stepName = values.join(", ");
+          scheduleStateSync();
+        });
+      });
+
+      holder.querySelectorAll("[data-step-menu-toggle]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const menu = button.closest(".checkbox-select");
+          const isOpen = menu.classList.toggle("open");
+          button.setAttribute("aria-expanded", String(isOpen));
+        });
+      });
+
       holder.querySelectorAll("[data-remove-error]").forEach((button) => {
         button.addEventListener("click", () => {
           const errorIndex = Number(button.dataset.removeError);
@@ -1645,9 +1730,20 @@
             </div>
             <div class="sm:col-span-2">
               <label for="${prefix}-stepNames">Step</label>
-              <select id="${prefix}-stepNames" data-error-index="${index}" data-error-field="stepNames" multiple>
-                ${stepOptions.map((option) => `<option value="${escapeHtml(option)}" ${selectedStepNames.includes(option) ? "selected" : ""}>${escapeHtml(option)}</option>`).join("") || `<option value="">No steps available</option>`}
-              </select>
+              <div class="checkbox-select" id="${prefix}-stepNames">
+                <button class="checkbox-select-toggle" type="button" data-step-menu-toggle aria-expanded="false">
+                  <span>${selectedStepNames.length ? `${selectedStepNames.length} selected` : "None selected"}</span>
+                  <i data-lucide="chevron-down" class="h-4 w-4"></i>
+                </button>
+                <div class="checkbox-select-menu">
+                  ${stepOptions.length ? stepOptions.map((option) => `
+                    <label class="checkbox-option">
+                      <input type="checkbox" value="${escapeHtml(option)}" data-error-index="${index}" data-step-checkbox ${selectedStepNames.includes(option) ? "checked" : ""}>
+                      <span>${escapeHtml(option)}</span>
+                    </label>
+                  `).join("") : `<div class="note-text">No steps available</div>`}
+                </div>
+              </div>
             </div>
             <div>
               <label for="${prefix}-frequency">Frequency</label>
